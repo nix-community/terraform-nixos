@@ -1,0 +1,47 @@
+#!/usr/bin/env nix-shell
+#!nix-shell -p ruby -i ruby
+# vim: ft=ruby
+#
+# Run this script to update the list of GCE images
+#
+require "json"
+require "uri"
+
+ENV['NIX_PATH'] = "nixpkgs=channel:nixpkgs-unstable"
+
+def render_tf
+  url_map=JSON.load(`nix-instantiate --json --strict --eval ./url_map.nix`)
+
+  out = <<~HEADER
+    # DON'T EDIT, run $0 instead
+    variable "url_map" {
+      type = "map"
+
+      default = {
+  HEADER
+
+  url_map.each_pair do |version, gs_url|
+    u = URI.parse(gs_url)
+    # convert the gs:// URL to HTTPS URL for Terraform to consume
+    #
+    # Eg: "gs://nixos-cloud-images/nixos-image-18.09-x86_64-linux.raw.tar.gz"
+    https_url = "https://#{u.host}.storage.googleapis.com#{u.path}"
+
+    out += "    %- 8s = %s\n" % [ version.inspect, https_url.inspect]
+  end
+
+  out += <<~FOOTER
+      }
+
+      description = "A map of release series to actual releases"
+    }
+  FOOTER
+end
+
+url_map_tf = render_tf
+
+open("url_map.tf", "w") do |f|
+  f.write(url_map_tf)
+end
+
+puts url_map_tf

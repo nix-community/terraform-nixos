@@ -1,0 +1,10 @@
+# Nix
+result
+result-*
+
+# Terraform
+*.tfstate
+*.tfstate.backup
+.terraform
+.terraform.*
+
