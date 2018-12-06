@@ -9,53 +9,13 @@ resource "google_storage_bucket" "nixos-images" {
   location = "EU"
 }
 
-# create a custom nixos images based on the nix code
+# create a custom nixos base image the deployer can SSH into
+#
+# this could also include much more configuration and be used to feed the
+# auto-scaler with system images
 module "nixos_image_custom" {
-  source       = "../../google_image_nixos_custom"
-  bucket_name  = "${google_storage_bucket.nixos-images.name}"
+  source      = "../../google_image_nixos_custom"
+  bucket_name = "${google_storage_bucket.nixos-images.name}"
+
   nixos_config = "${path.module}/image_nixos_custom.nix"
-}
-
-# spin up the instance
-resource "google_compute_instance" "image-nixos-custom" {
-  name         = "image-nixos-custom"
-  machine_type = "n1-standard-1"
-  zone         = "us-central1-a"
-
-  boot_disk {
-    initialize_params {
-      image = "${module.nixos_image_custom.self_link}"
-      size  = "20"
-    }
-  }
-
-  network_interface {
-    network = "default"
-
-    // Give it a public IP
-    access_config {}
-  }
-
-  lifecycle {
-    // No need to re-deploy the machine if the image changed
-    // NixOS is already immutable
-    ignore_changes = ["boot_disk"]
-  }
-}
-
-module "deploy_nixos" {
-  source       = "../../deploy_nixos"
-  nixos_config = "${path.module}/image_nixos_custom.nix"
-  target_host  = "${google_compute_instance.image-nixos-custom.network_interface.0.network_ip}"
-
-  triggers = {
-    // Also re-deploy whenever the VM is re-created
-    instance_id = "${google_compute_instance.image-nixos-custom.id}"
-  }
-
-  // Pass some secrets. See the terraform-servets-provider to handle secrets
-  // in Terraform
-  keys = {
-    foo = "bar"
-  }
 }

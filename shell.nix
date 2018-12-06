@@ -14,4 +14,8 @@ mkShell {
     tf
     terraform-docs
   ];
+
+  shellHook = ''
+    NIX_PATH=nixpkgs=channel:nixos-18.09
+  '';
 }

@@ -6,6 +6,8 @@ module "nixos_image_1809" {
   version = "18.09"
 }
 
+// This instance is not very useful since it doesn't contain any
+// configuration. This could be fixed by passing a user metadata script.
 resource "google_compute_instance" "image-nixos" {
   name         = "image-nixos"
   machine_type = "n1-standard-1"
