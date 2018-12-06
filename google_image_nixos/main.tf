@@ -23,8 +23,13 @@ variable "licenses" {
 # ---
 
 locals {
-  image_url  = "${lookup(var.url_map, var.version)}"
-  image_name = "${replace(replace(basename(local.image_url), ".raw.tar.gz", ""), "/[._]/", "-")}"
+  image_url = "${lookup(var.url_map, var.version)}"
+
+  # Example: nixos-image-18-09-1228-a4c4cbb613c-x86-64-linux
+  #
+  # Remove a few things so that it matches the required regexp for image names
+  #   (?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)
+  image_name = "${replace(replace(basename(local.image_url), ".raw.tar.gz", ""), "/[._]+/", "-")}"
 }
 
 resource "google_compute_image" "nixos" {
