@@ -57,6 +57,7 @@ PR as well!
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 | gcp\_project\_id | The ID of the project in which the resource belongs. If it is not provided, the provider project is used. | string | `` | no |
+| licenses | A list of license URIs to apply to this image. Changing this forces a new resource to be created. | list | `<list>` | no |
 | url\_map | A map of release series to actual releases | map | `<map>` | no |
 | version | The NixOS version to use. Eg: 18.09 | string | `latest` | no |
 

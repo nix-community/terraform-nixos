@@ -31,6 +31,7 @@ Only x86_64-linux is currently supported.
 |------|-------------|:----:|:-----:|:-----:|
 | bucket\_name | Bucket where to store the image | string | - | yes |
 | gcp\_project\_id | The ID of the project in which the resource belongs. If it is not provided, the provider project is used. | string | `` | no |
+| licenses | A list of license URIs to apply to this image. Changing this forces a new resource to be created. | list | `<list>` | no |
 | nixos\_config | Path to a nixos configuration.nix file | string | - | yes |
 
 ## Outputs

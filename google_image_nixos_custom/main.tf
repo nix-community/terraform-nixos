@@ -12,6 +12,16 @@ variable "gcp_project_id" {
   description = "The ID of the project in which the resource belongs. If it is not provided, the provider project is used."
 }
 
+variable "licenses" {
+  type = "list"
+
+  default = [
+    "https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx",
+  ]
+
+  description = "A list of license URIs to apply to this image. Changing this forces a new resource to be created."
+}
+
 # ----------------------------------------------------
 
 data "external" "nix_build" {
@@ -47,9 +57,10 @@ resource "google_storage_bucket_object" "nixos" {
 }
 
 resource "google_compute_image" "nixos" {
-  name    = "${local.image_name}"
-  family  = "nixos"
-  project = "${var.gcp_project_id}"
+  name     = "${local.image_name}"
+  family   = "nixos"
+  project  = "${var.gcp_project_id}"
+  licenses = ["${var.licenses}"]
 
   raw_disk {
     source = "https://${var.bucket_name}.storage.googleapis.com/${google_storage_bucket_object.nixos.name}"

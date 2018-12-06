@@ -10,6 +10,16 @@ variable "gcp_project_id" {
   description = "The ID of the project in which the resource belongs. If it is not provided, the provider project is used."
 }
 
+variable "licenses" {
+  type = "list"
+
+  default = [
+    "https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx",
+  ]
+
+  description = "A list of license URIs to apply to this image. Changing this forces a new resource to be created."
+}
+
 # ---
 
 locals {
@@ -22,6 +32,7 @@ resource "google_compute_image" "nixos" {
   description = "NixOS ${var.version}"
   family      = "nixos"
   project     = "${var.gcp_project_id}"
+  licenses    = ["${var.licenses}"]
 
   raw_disk {
     source = "${local.image_url}"
