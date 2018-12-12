@@ -55,7 +55,7 @@ variable "keys" {
 
 locals {
   triggers = {
-    deploy_nixos_drv  = "${data.external.nixos-instantiate.result.drv_path}"
+    deploy_nixos_drv  = "${data.external.nixos-instantiate.result["drv_path"]}"
     deploy_nixos_keys = "${sha256(jsonencode(var.keys))}"
   }
 
@@ -115,7 +115,7 @@ resource "null_resource" "deploy_nixos" {
   provisioner "local-exec" {
     interpreter = [
       "${path.module}/nixos-deploy.sh",
-      "${data.external.nixos-instantiate.result.drv_path}",
+      "${data.external.nixos-instantiate.result["drv_path"]}",
       "${var.target_user}@${var.target_host}",
       "switch",
       "${var.extra_build_args}",
