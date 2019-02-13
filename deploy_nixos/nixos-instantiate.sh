@@ -32,7 +32,7 @@ fi
 cd "$(readlink -f "$config_pwd")"
 
 # Run!
-echo "running: ${command[*]@Q}" >&2
+echo "running: ${NIX_PATH:+NIX_PATH=$NIX_PATH} ${command[*]@Q}" >&2
 drv_path=$("${command[@]}")
 
 if [[ "$drv_path" != /nix/store/*.drv ]]; then

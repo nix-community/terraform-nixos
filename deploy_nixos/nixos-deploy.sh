@@ -28,7 +28,7 @@ log() {
 }
 
 copyToTarget() {
-  NIX_SSHOPTS="${sshOpts[*]}" nix-copy-closure --to "$targetHost" "$1"
+  NIX_SSHOPTS="${sshOpts[*]}" nix-copy-closure --to "$targetHost" "$@"
 }
 
 # assumes that passwordless sudo is enabled on the server
