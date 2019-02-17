@@ -1,4 +1,4 @@
-# `google_image_nixos_custom`
+# google_cloud_image_nixos
 
 This terraform module builds and publishes custom NixOS Google Cloud images.
 
@@ -7,7 +7,9 @@ This terraform module builds and publishes custom NixOS Google Cloud images.
 Because this module uses the "external" provider it needs the following
 executables to be in the path to work properly:
 
-* nix-shell
+* bash
+* nix
+* `readlink -f` (busybox or coreutils)
 
 ## Known limitations
 

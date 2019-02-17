@@ -1,6 +1,4 @@
-#!/usr/bin/env nix-shell
-#!nix-shell -p coreutils -i bash
-#
+#!/usr/bin/env bash
 # Special version of nix-build that integrates with the Terraform external
 # provider
 set -euo pipefail
