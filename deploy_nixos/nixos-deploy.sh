@@ -13,6 +13,7 @@ profile=/nix/var/nix/profiles/system
 sshOpts=(
   -o "ControlMaster=auto"
   -o "ControlPersist=60"
+  -o "ControlPath=${HOME}/.ssh/deploy_nixos_%C"
   # Avoid issues with IP re-use. This disable TOFU security.
   -o "StrictHostKeyChecking=no"
   -o "UserKnownHostsFile=/dev/null"
@@ -47,16 +48,8 @@ shift
 set -- "${@:1:$(($# - 1))}"
 buildArgs+=("$@")
 
-# Setup SSH
-sshTmpDir=$(mktemp -t -d nixos-rebuild.XXXXXX)
-sshOpts+=(-o "ControlPath=$sshTmpDir/ssh-%n")
-sshCleanup() {
-  for ctrl in "$sshTmpDir"/ssh-*; do
-    ssh -o ControlPath="$ctrl" -O exit dummyhost 2>/dev/null || true
-  done
-  rm -rf "$sshTmpDir"
-}
-trap sshCleanup EXIT
+# Ensure the local SSH directory exists
+mkdir -m 0700 -p "$HOME"/.ssh
 
 # Build derivation
 log "building nix code"
