@@ -1,5 +1,4 @@
-#! /usr/bin/env nix-shell
-#! nix-shell -p coreutils -i bash
+#! /usr/bin/env bash
 set -euo pipefail
 
 # Args

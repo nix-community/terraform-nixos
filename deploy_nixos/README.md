@@ -1,4 +1,4 @@
-# `deploy_nixos`
+# deploy_nixos
 
 A Terraform module that knows how to deploy NixOS onto a target host.
 
@@ -45,7 +45,10 @@ This would typically be provisioned in the base image.
 
 ## Dependencies
 
+* `bash` 4.0+
 * `nix`
+* `openssh`
+* `readlink` with `-f` (coreutils or busybox)
 
 ## Known limitations
 
