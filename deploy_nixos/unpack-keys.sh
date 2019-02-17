@@ -38,7 +38,7 @@ echo "unpacking $keys_file"
 # extract the keys from .packed.json
 for keyname in $(jq -S -r 'keys[]' "$keys_file"); do
   echo "unpacking: $keyname"
-  jq -r ".$keyname" < "$keys_file" > "$keys_dir/$keyname"
+  jq -r ".\"$keyname\"" < "$keys_file" > "$keys_dir/$keyname"
   chmod 0640 "$keys_dir/$keyname"
 done
 
