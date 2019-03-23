@@ -1,0 +1,51 @@
+#!/usr/bin/env nix-shell
+#!nix-shell -p python3 -i python
+# vim: ft=python
+#
+# Run this script to update the list of EC2 images
+#
+import json
+import io
+from subprocess import check_output
+from textwrap import dedent
+from os import putenv
+
+putenv('NIX_PATH', 'nixpkgs=channel:nixpkgs-unstable')
+
+def render_tf():
+  nix_eval = check_output(['nix-instantiate', '--json', '--strict', '--eval', './url_map.nix'])
+  url_map = json.loads(nix_eval)
+
+  out = io.StringIO()
+  out.write(dedent("""\
+    # DON'T EDIT, run '%s' instead
+    variable "url_map" {
+      type = "map"
+
+      default = {
+  """ % __file__))
+
+  for version, regions in url_map.items():
+    for region, kinds in regions.items():
+      for kind, ami in kinds.items():
+        out.write('    "%s.%s.%s" = "%s"\n' % (version, region, kind, ami))
+
+  out.write(dedent("""\
+      }
+
+      description = "A map of release series to actual releases"
+    }
+  """))
+
+  return out.getvalue()
+
+url_map_tf = render_tf()
+
+with open("url_map.tf", "w") as f:
+  f.write(url_map_tf)
+
+print(url_map_tf)
+
+# Local Variables:
+# mode: Python
+# End:
