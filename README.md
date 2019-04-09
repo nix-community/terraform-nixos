@@ -64,6 +64,10 @@ The list of modules provided by this project:
 To better understand how these modules can be used together, look into the
 [./examples](examples) folder.
 
+## Related projects
+
+* [terraform-provider-nix](https://github.com/andrewchambers/terraform-provider-nix)
+
 ## Future
 
 * Support other cloud providers.
