@@ -12,14 +12,14 @@ supported.
       region = "us-west-2"
     }
 
-    module "nixos_image_1809" {
+    module "nixos_image_1903" {
       source  = "path/to/aws_image_nixos"
-      release = "18.09"
+      release = "19.03"
       region  = "${local.region}"
     }
 
     resource "aws_instance" "example" {
-      ami           = "${module.nixos_image_1809.self_link}"
+      ami           = "${module.nixos_image_1903.self_link}"
       instance_type = "t2.micro"
       region        = "${local.region}"
 
