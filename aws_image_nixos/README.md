@@ -8,20 +8,18 @@ supported.
 
 ## Example
 
-    locals {
-      region = "us-west-2"
+    provider "aws" {
+      region = "eu-west-1"
     }
 
-    module "nixos_image_1809" {
+    module "nixos_image_1903" {
       source  = "path/to/aws_image_nixos"
-      release = "18.09"
-      region  = "${local.region}"
+      release = "19.03"
     }
 
     resource "aws_instance" "example" {
-      ami           = "${module.nixos_image_1809.self_link}"
+      ami           = "${module.nixos_image_1903.ami}"
       instance_type = "t2.micro"
-      region        = "${local.region}"
 
       ...
     }
@@ -45,4 +43,4 @@ Run the `./update-url-map` script to fetch new image releases.
 | Name | Description |
 |------|-------------|
 | ami | NixOS AMI on AWS |
-
+<!-- terraform-docs-end -->
