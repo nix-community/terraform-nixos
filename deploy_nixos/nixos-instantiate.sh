@@ -10,7 +10,17 @@ shift
 shift
 
 # Building the command
-command=(nix-instantiate "<nixpkgs/nixos>")
+command=(nix-instantiate --show-trace --expr '
+  { system, configuration, ... }:
+  let
+    os = import <nixpkgs/nixos> { inherit system configuration; };
+    inherit (import <nixpkgs/lib>) concatStringsSep;
+  in {
+    substituters = concatStringsSep " " os.config.nix.binaryCaches;
+    trusted-public-keys = concatStringsSep " " os.config.nix.binaryCachePublicKeys;
+    drv_path = os.system.drvPath;
+    out_path = os.system;
+  }')
 
 if [[ -f "$config" ]]; then
   config=$(readlink -f "$config")
@@ -30,18 +40,12 @@ fi
 # Changing directory
 cd "$(readlink -f "$config_pwd")"
 
-# Run!
-echo "running: ${NIX_PATH:+NIX_PATH=$NIX_PATH} ${command[*]@Q}" >&2
-drv_path=$("${command[@]}")
+# Instantiate
+echo "running (instantiating): ${NIX_PATH:+NIX_PATH=$NIX_PATH} ${command[*]@Q}" -A out_path >&2
+"${command[@]}" -A out_path >/dev/null
 
-if [[ "$drv_path" != /nix/store/*.drv ]]; then
-  echo "Bad output: $drv_path" >&2
-  exit 1
-fi
-
-# Output
-cat <<JSON
-{
-  "drv_path": "$drv_path"
-}
-JSON
+# Evaluate some more details,
+# relying on preceding "Instantiate" command to perform the instantiation,
+# because `--eval` is required but doesn't instantiate for some reason.
+echo "running (evaluating): ${NIX_PATH:+NIX_PATH=$NIX_PATH} ${command[*]@Q}" --eval --strict --json >&2
+"${command[@]}" --eval --strict --json
