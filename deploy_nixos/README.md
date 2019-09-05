@@ -80,9 +80,9 @@ see also:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| NIX\_PATH | Allow to pass custom NIX_PATH. Ignored if `-`. | string | `-` | no |
-| config | NixOS configuration to be evaluated. This argument is required unless 'nixos_config' is given | string | `` | no |
-| config\_pwd | Directory to evaluate the configuration in. This argument is required if 'config' is given | string | `` | no |
+| NIX\_PATH | Allow to pass custom NIX_PATH. Ignored if `-`. | string | `"-"` | no |
+| config | NixOS configuration to be evaluated. This argument is required unless 'nixos_config' is given | string | `""` | no |
+| config\_pwd | Directory to evaluate the configuration in. This argument is required if 'config' is given | string | `""` | no |
 | extra\_build\_args | List of arguments to pass to the nix builder | list | `<list>` | no |
 | extra\_eval\_args | List of arguments to pass to the nix evaluation | list | `<list>` | no |
 | keys | A map of filename to content to upload as secrets in /var/keys | map | `<map>` | no |

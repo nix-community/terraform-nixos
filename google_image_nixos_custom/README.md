@@ -31,15 +31,15 @@ Only x86_64-linux is currently supported.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| bucket\_name | Bucket where to store the image | string | - | yes |
-| gcp\_project\_id | The ID of the project in which the resource belongs. If it is not provided, the provider project is used. | string | `` | no |
+| bucket\_name | Bucket where to store the image | string | n/a | yes |
+| gcp\_project\_id | The ID of the project in which the resource belongs. If it is not provided, the provider project is used. | string | `""` | no |
 | licenses | A list of license URIs to apply to this image. Changing this forces a new resource to be created. | list | `<list>` | no |
-| nixos\_config | Path to a nixos configuration.nix file | string | - | yes |
+| nixos\_config | Path to a nixos configuration.nix file | string | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| self\_link | - |
+| self\_link |  |
 
 <!-- terraform-docs-end -->

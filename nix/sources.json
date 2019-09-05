@@ -1,14 +1,14 @@
 {
     "nix-pre-commit-hooks": {
         "homepage": "",
-        "url": "https://github.com/hercules-ci/nix-pre-commit-hooks/archive/0526dc108c1235d8489087e1096d4e72f97f587d.tar.gz",
+        "url": "https://github.com/hercules-ci/nix-pre-commit-hooks/archive/425a2150101da3ce1c303e497ca1217c6ded5992.tar.gz",
         "owner": "hercules-ci",
         "branch": "terraform",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz",
         "repo": "nix-pre-commit-hooks",
-        "sha256": "1ncchg4zr0v8ckmqc6gm3hxvvxyzr2clblwvk56bzpjlxcdanpj6",
+        "sha256": "00qcfzmw9k3prdzzmcbc753znw1w4r7bgi55kpqszyivgbsyzysv",
         "description": "Seamless integration of https://pre-commit.com git hooks with Nix.",
-        "rev": "0526dc108c1235d8489087e1096d4e72f97f587d"
+        "rev": "425a2150101da3ce1c303e497ca1217c6ded5992"
     },
     "nixpkgs": {
         "homepage": "https://github.com/NixOS/nixpkgs",

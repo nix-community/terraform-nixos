@@ -33,9 +33,9 @@ Run the `./update-url-map` script to fetch new image releases.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| region | The region to use. If not provided, current provider's region will be used. | string | `` | no |
-| release | The NixOS version to use. For example, 18.09 | string | `latest` | no |
-| type | The type of the AMI to use -- hvm-ebs, pv-ebs, or pv-s3. | string | `hvm-ebs` | no |
+| region | The region to use. If not provided, current provider's region will be used. | string | `""` | no |
+| release | The NixOS version to use. For example, 18.09 | string | `"latest"` | no |
+| type | The type of the AMI to use -- hvm-ebs, pv-ebs, or pv-s3. | string | `"hvm-ebs"` | no |
 | url\_map | A map of release series to actual releases | map | `<map>` | no |
 
 ## Outputs
@@ -43,4 +43,5 @@ Run the `./update-url-map` script to fetch new image releases.
 | Name | Description |
 |------|-------------|
 | ami | NixOS AMI on AWS |
+
 <!-- terraform-docs-end -->
