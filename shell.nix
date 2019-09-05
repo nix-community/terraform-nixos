@@ -1,4 +1,4 @@
-with import <nixpkgs> {};
+with import ./nix {};
 let
   tf = terraform.withPlugins(p: with p; [
     external
@@ -16,6 +16,7 @@ mkShell {
   ];
 
   shellHook = ''
-    NIX_PATH=nixpkgs=channel:nixos-18.09
+    NIX_PATH=nixpkgs=${pkgs.path}
+    ${pre-commit-check.shellHook}
   '';
 }

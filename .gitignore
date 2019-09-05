@@ -8,3 +8,5 @@ result-*
 .terraform
 .terraform.*
 
+# Pre-commit
+.pre-commit-hooks

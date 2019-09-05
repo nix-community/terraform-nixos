@@ -1,0 +1,6 @@
+repos:
+- repo: .pre-commit-hooks/
+  rev: master
+  hooks:
+   -   id: terraform-format
+   -   id: terraform-docs-updater
