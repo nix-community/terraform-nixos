@@ -2,7 +2,8 @@
 with
   { overlay = _: pkgs:
       { inherit (import sources.niv {}) niv;
-        inherit (import sources.nix-pre-commit-hooks) pre-commit-check;
+        inherit (import sources.gitignore { inherit (pkgs) lib; }) gitignoreSource;
+        nix-pre-commit-hooks = import sources.nix-pre-commit-hooks;
       };
   };
 import sources.nixpkgs
