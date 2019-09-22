@@ -60,7 +60,12 @@ locals {
   }
 
   target_system = ["--argstr", "system", "x86_64-linux"]
-  attr_path     = ["--attr", "system"]
+
+  extra_build_args = [
+    "--option", "substituters", "${data.external.nixos-instantiate.result["substituters"]}",
+    "--option", "trusted-public-keys", "${data.external.nixos-instantiate.result["trusted-public-keys"]}",
+    "${var.extra_build_args}"
+  ]
 }
 
 # used to detect changes in the configuration
@@ -71,7 +76,6 @@ data "external" "nixos-instantiate" {
     "${var.config != "" ? var.config : var.nixos_config}",
     "${var.config_pwd != "" ? var.config_pwd : "."}",
     "${local.target_system}",
-    "${local.attr_path}",
     "${var.extra_eval_args}",
   ]
 }
@@ -118,7 +122,7 @@ resource "null_resource" "deploy_nixos" {
       "${data.external.nixos-instantiate.result["drv_path"]}",
       "${var.target_user}@${var.target_host}",
       "switch",
-      "${var.extra_build_args}",
+      "${local.extra_build_args}",
     ]
 
     command = "ignoreme"

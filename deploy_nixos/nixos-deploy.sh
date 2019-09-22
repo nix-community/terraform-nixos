@@ -32,7 +32,11 @@ copyToTarget() {
 
 # assumes that passwordless sudo is enabled on the server
 targetHostCmd() {
-  ssh "${sshOpts[@]}" "$targetHost" -- ./maybe-sudo.sh "$@"
+  # ${*@Q} escapes the arguments losslessly into space-separted quoted strings.
+  # `ssh` did not properly maintain the array nature of the command line,
+  # erroneously splitting arguments with internal spaces, even when using `--`.
+  # Tested with OpenSSH_7.9p1.
+  ssh "${sshOpts[@]}" "$targetHost" "./maybe-sudo.sh ${*@Q}"
 }
 
 ### Main ###
