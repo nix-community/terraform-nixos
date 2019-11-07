@@ -19,7 +19,7 @@ Nix. NixOS is a Linux distribution built on top of nixpkgs.
 
 ## What is a Terraform Module?
 
-A Terraform Module refers to a self-contained packages of Terraform
+A Terraform Module refers to a self-contained package of Terraform
 configurations that are managed as a group. This repo contains a collection of
 Terraform Modules which can be composed together to create useful
 infrastructure patterns. 
