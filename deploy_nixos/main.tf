@@ -61,23 +61,25 @@ locals {
 
   target_system = ["--argstr", "system", "x86_64-linux"]
 
-  extra_build_args = [
-    "--option", "substituters", "${data.external.nixos-instantiate.result["substituters"]}",
-    "--option", "trusted-public-keys", "${data.external.nixos-instantiate.result["trusted-public-keys"]}",
-    "${var.extra_build_args}"
-  ]
+  extra_build_args = concat([
+      "--option", "substituters", "${data.external.nixos-instantiate.result["substituters"]}",
+      "--option", "trusted-public-keys", "${data.external.nixos-instantiate.result["trusted-public-keys"]}",
+    ],
+    var.extra_build_args
+  )
 }
 
 # used to detect changes in the configuration
 data "external" "nixos-instantiate" {
-  program = [
-    "${path.module}/nixos-instantiate.sh",
-    "${var.NIX_PATH}",
-    "${var.config != "" ? var.config : var.nixos_config}",
-    "${var.config_pwd != "" ? var.config_pwd : "."}",
-    "${local.target_system}",
-    "${var.extra_eval_args}",
-  ]
+  program = concat([
+      "${path.module}/nixos-instantiate.sh",
+      "${var.NIX_PATH}",
+      "${var.config != "" ? var.config : var.nixos_config}",
+      "${var.config_pwd != "" ? var.config_pwd : "."}",
+    ],
+    local.target_system,
+    var.extra_eval_args,
+  )
 }
 
 resource "null_resource" "deploy_nixos" {
@@ -117,15 +119,16 @@ resource "null_resource" "deploy_nixos" {
 
   # do the actual deployment
   provisioner "local-exec" {
-    interpreter = [
-      "${path.module}/nixos-deploy.sh",
-      "${data.external.nixos-instantiate.result["drv_path"]}",
-      "${var.target_user}@${var.target_host}",
-      "switch",
-      "${local.extra_build_args}",
-    ]
+    interpreter = concat([
+        "${path.module}/nixos-deploy.sh",
+        "${data.external.nixos-instantiate.result["drv_path"]}",
+        "${var.target_user}@${var.target_host}",
+        "switch",
+      ],
+      local.extra_build_args,
+    )
 
-    command = "ignoreme"
+    command = "deploy generated build result"
   }
 }
 
