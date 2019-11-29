@@ -59,6 +59,24 @@ The list of modules provided by this project:
 * [google_image_nixos_custom](google_image_nixos_custom#readme) - build and
   deploy a custom GCE image into a Google Cloud Project
 
+## Using these modules from your terraform configuration
+
+Terraform supports importing [modules](https://www.terraform.io/docs/configuration/modules.html) directly [from a GitHub repository](https://www.terraform.io/docs/modules/sources.html#github).
+
+For example, to use the [`deploy_nixos`](deploy_nixos#readme) module:
+
+```
+module "deploy_nixos" {
+  source = "github.com/tweag/terraform-nixos//deploy_nixos?ref=ced68729b6a0382dda02401c8f663c9b29c29368"
+
+  … module-specific fields …
+}
+```
+
+Beware the double `//`, which separates the github repository url from the
+subdirectory that contains the module. `?ref=` specifies a specific git ref
+of the repository, in this case the commit `ced687…`.
+
 ## Examples
 
 To better understand how these modules can be used together, look into the
