@@ -29,24 +29,24 @@ variable "config_pwd" {
 
 variable "extra_eval_args" {
   description = "List of arguments to pass to the nix evaluation"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
 variable "extra_build_args" {
   description = "List of arguments to pass to the nix builder"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
 variable "triggers" {
-  type        = "map"
+  type        = map(string)
   description = "Triggers for deploy"
   default     = {}
 }
 
 variable "keys" {
-  type        = "map"
+  type        = map(string)
   description = "A map of filename to content to upload as secrets in /var/keys"
   default     = {}
 }
@@ -55,53 +55,58 @@ variable "keys" {
 
 locals {
   triggers = {
-    deploy_nixos_drv  = "${data.external.nixos-instantiate.result["drv_path"]}"
-    deploy_nixos_keys = "${sha256(jsonencode(var.keys))}"
+    deploy_nixos_drv  = data.external.nixos-instantiate.result["drv_path"]
+    deploy_nixos_keys = sha256(jsonencode(var.keys))
   }
 
   target_system = ["--argstr", "system", "x86_64-linux"]
 
-  extra_build_args = [
-    "--option", "substituters", "${data.external.nixos-instantiate.result["substituters"]}",
-    "--option", "trusted-public-keys", "${data.external.nixos-instantiate.result["trusted-public-keys"]}",
-    "${var.extra_build_args}"
-  ]
+  extra_build_args = concat([
+    "--option", "substituters", data.external.nixos-instantiate.result["substituters"],
+    "--option", "trusted-public-keys", data.external.nixos-instantiate.result["trusted-public-keys"],
+    ],
+    var.extra_build_args,
+  )
 }
 
 # used to detect changes in the configuration
 data "external" "nixos-instantiate" {
-  program = [
+  program = concat([
     "${path.module}/nixos-instantiate.sh",
-    "${var.NIX_PATH}",
-    "${var.config != "" ? var.config : var.nixos_config}",
-    "${var.config_pwd != "" ? var.config_pwd : "."}",
-    "${local.target_system}",
-    "${var.extra_eval_args}",
-  ]
+    var.NIX_PATH,
+    var.config != "" ? var.config : var.nixos_config,
+    var.config_pwd != "" ? var.config_pwd : ".",
+    ],
+    local.target_system,
+    var.extra_eval_args,
+  )
 }
 
 resource "null_resource" "deploy_nixos" {
-  triggers = "${merge(var.triggers, local.triggers)}"
+  triggers = merge(var.triggers, local.triggers)
 
   connection {
     type  = "ssh"
-    host  = "${var.target_host}"
-    user  = "${var.target_user}"
+    host  = var.target_host
+    user  = var.target_user
     agent = true
   }
 
   # copy the secret keys to the host
+  # copy the secret keys to the host
   provisioner "file" {
-    content     = "${jsonencode(var.keys)}"
+    content     = jsonencode(var.keys)
     destination = "packed-keys.json"
   }
 
+  # FIXME: move this to nixos-deploy.sh
   # FIXME: move this to nixos-deploy.sh
   provisioner "file" {
     source      = "${path.module}/unpack-keys.sh"
     destination = "unpack-keys.sh"
   }
 
+  # FIXME: move this to nixos-deploy.sh
   # FIXME: move this to nixos-deploy.sh
   provisioner "file" {
     source      = "${path.module}/maybe-sudo.sh"
@@ -116,13 +121,14 @@ resource "null_resource" "deploy_nixos" {
   }
 
   # do the actual deployment
+  # do the actual deployment
   provisioner "local-exec" {
     interpreter = [
       "${path.module}/nixos-deploy.sh",
-      "${data.external.nixos-instantiate.result["drv_path"]}",
+      data.external.nixos-instantiate.result["drv_path"],
       "${var.target_user}@${var.target_host}",
       "switch",
-      "${local.extra_build_args}",
+      local.extra_build_args,
     ]
 
     command = "ignoreme"
@@ -133,5 +139,6 @@ resource "null_resource" "deploy_nixos" {
 
 output "id" {
   description = "random ID that changes on every nixos deployment"
-  value       = "${null_resource.deploy_nixos.id}"
+  value       = null_resource.deploy_nixos.id
 }
+

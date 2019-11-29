@@ -1,6 +1,6 @@
 # DON'T EDIT, run $0 instead
 variable "url_map" {
-  type = "map"
+  type = map(string)
 
   default = {
     "14.12"  = "https://nixos-cloud-images.storage.googleapis.com/nixos-14.12.471.1f09b77-x86_64-linux.raw.tar.gz"
@@ -14,3 +14,4 @@ variable "url_map" {
 
   description = "A map of release series to actual releases"
 }
+

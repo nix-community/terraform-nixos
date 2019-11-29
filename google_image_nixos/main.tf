@@ -1,17 +1,17 @@
-variable "version" {
-  type        = "string"
+variable "nixos_version" {
+  type        = string
   default     = "latest"
   description = "The NixOS version to use. Eg: 18.09"
 }
 
 variable "gcp_project_id" {
-  type        = "string"
+  type        = string
   default     = ""
   description = "The ID of the project in which the resource belongs. If it is not provided, the provider project is used."
 }
 
 variable "licenses" {
-  type = "list"
+  type = list(string)
 
   default = [
     "https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx",
@@ -23,24 +23,28 @@ variable "licenses" {
 # ---
 
 locals {
-  image_url = "${lookup(var.url_map, var.version)}"
+  image_url = var.url_map[var.nixos_version]
 
   # Example: nixos-image-18-09-1228-a4c4cbb613c-x86-64-linux
   #
   # Remove a few things so that it matches the required regexp for image names
   #   (?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)
-  image_name = "${replace(replace(basename(local.image_url), ".raw.tar.gz", ""), "/[._]+/", "-")}"
+  image_name = replace(
+    replace(basename(local.image_url), ".raw.tar.gz", ""),
+    "/[._]+/",
+    "-",
+  )
 }
 
 resource "google_compute_image" "nixos" {
-  name        = "${local.image_name}"
-  description = "NixOS ${var.version}"
+  name        = local.image_name
+  description = "NixOS ${var.nixos_version}"
   family      = "nixos"
-  project     = "${var.gcp_project_id}"
-  licenses    = ["${var.licenses}"]
+  project     = var.gcp_project_id
+  licenses    = var.licenses
 
   raw_disk {
-    source = "${local.image_url}"
+    source = local.image_url
   }
 }
 
@@ -48,5 +52,6 @@ resource "google_compute_image" "nixos" {
 
 output "self_link" {
   description = "Link to the NixOS Compute Image"
-  value       = "${google_compute_image.nixos.self_link}"
+  value       = google_compute_image.nixos.self_link
 }
+
