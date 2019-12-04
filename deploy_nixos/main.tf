@@ -123,14 +123,14 @@ resource "null_resource" "deploy_nixos" {
   # do the actual deployment
   # do the actual deployment
   provisioner "local-exec" {
-    interpreter = [
-      "${path.module}/nixos-deploy.sh",
-      data.external.nixos-instantiate.result["drv_path"],
-      "${var.target_user}@${var.target_host}",
-      "switch",
-      local.extra_build_args,
-    ]
-
+    interpreter = concat([
+        "${path.module}/nixos-deploy.sh",
+        data.external.nixos-instantiate.result["drv_path"],
+        "${var.target_user}@${var.target_host}",
+        "switch",
+      ],
+      local.extra_build_args
+    )
     command = "ignoreme"
   }
 }
