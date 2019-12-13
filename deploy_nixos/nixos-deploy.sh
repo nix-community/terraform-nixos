@@ -18,6 +18,8 @@ sshOpts=(
   -o "StrictHostKeyChecking=no"
   -o "UserKnownHostsFile=/dev/null"
   -o "GlobalKnownHostsFile=/dev/null"
+  # interactive authentication is not possible
+  -o "BatchMode=yes"
 )
 
 ###  Argument parsing ###
