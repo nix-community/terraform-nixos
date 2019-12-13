@@ -90,6 +90,7 @@ resource "null_resource" "deploy_nixos" {
     host  = var.target_host
     user  = var.target_user
     agent = true
+    timeout = "10s"
   }
 
   # copy the secret keys to the host
