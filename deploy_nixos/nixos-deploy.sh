@@ -20,6 +20,24 @@ sshOpts=(
   -o "GlobalKnownHostsFile=/dev/null"
 )
 
+###  Argument parsing ###
+
+drvPath="$1"
+targetHost="$2"
+sshPrivateKeyFile="$3"
+action="$4"
+shift
+shift
+shift
+shift
+# remove the last argument
+set -- "${@:1:$(($# - 1))}"
+buildArgs+=("$@")
+
+if [ -n "${sshPrivateKeyFile}" ]; then
+    sshOpts+=( -o "IdentityFile=${sshPrivateKeyFile}" )
+fi
+
 ### Functions ###
 
 log() {
@@ -40,17 +58,6 @@ targetHostCmd() {
 }
 
 ### Main ###
-
-# Argument parsing
-drvPath="$1"
-targetHost="$2"
-action="$3"
-shift
-shift
-shift
-# remove the last argument
-set -- "${@:1:$(($# - 1))}"
-buildArgs+=("$@")
 
 # Ensure the local SSH directory exists
 mkdir -m 0700 -p "$HOME"/.ssh
