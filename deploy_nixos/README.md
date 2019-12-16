@@ -89,6 +89,7 @@ see also:
 | nixos\_config | Path to a NixOS configuration | string | `` | no |
 | target\_host | DNS host to deploy to | string | - | yes |
 | target\_user | SSH user used to connect to the target_host | string | `root` | no |
+| ssh_private_key_file | SSH private key used to connect to the target host | string | unset | no |
 | triggers | Triggers for deploy | map | `<map>` | no |
 
 ## Outputs

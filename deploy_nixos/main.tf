@@ -7,6 +7,11 @@ variable "target_host" {
   description = "DNS host to deploy to"
 }
 
+variable "ssh_private_key_file" {
+  description = "Private key used to connect to the target_host"
+  default     = ""
+}
+
 variable "NIX_PATH" {
   description = "Allow to pass custom NIX_PATH. Ignored if `-`."
   default     = "-"
@@ -90,6 +95,8 @@ resource "null_resource" "deploy_nixos" {
     host  = var.target_host
     user  = var.target_user
     agent = true
+    timeout = "10s"
+    private_key = var.ssh_private_key_file != "" ? file(var.ssh_private_key_file) : null
   }
 
   # copy the secret keys to the host
@@ -127,6 +134,7 @@ resource "null_resource" "deploy_nixos" {
         "${path.module}/nixos-deploy.sh",
         data.external.nixos-instantiate.result["drv_path"],
         "${var.target_user}@${var.target_host}",
+        var.ssh_private_key_file,
         "switch",
       ],
       local.extra_build_args
