@@ -95,7 +95,7 @@ resource "null_resource" "deploy_nixos" {
     host  = var.target_host
     user  = var.target_user
     agent = true
-    timeout = "10s"
+    timeout = "100s"
     private_key = var.ssh_private_key_file != "" ? file(var.ssh_private_key_file) : null
   }
 
