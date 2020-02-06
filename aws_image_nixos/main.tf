@@ -18,7 +18,7 @@ variable "type" {
 
 # ---
 
-data "aws_region" "current" { }
+data "aws_region" "current" {}
 
 locals {
   key = "${var.release}.${coalesce(var.region, data.aws_region.current.name)}.${var.type}"
