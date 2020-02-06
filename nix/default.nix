@@ -8,6 +8,8 @@ with
           self.nix-pre-commit-hooks.run {
             src = self.gitignoreSource ../.;
             hooks.shellcheck.enable = true;
+            hooks.shellcheck.files = ''.*\.sh'';
+            hooks.shellcheck.types = pkgs.lib.mkForce ["executable"];
             hooks.terraform-format.enable = true;
           };
       };

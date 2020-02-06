@@ -54,6 +54,7 @@ copyToTarget() {
 
 # assumes that passwordless sudo is enabled on the server
 targetHostCmd() {
+  # shellcheck disable=SC2029
   # ${*@Q} escapes the arguments losslessly into space-separted quoted strings.
   # `ssh` did not properly maintain the array nature of the command line,
   # erroneously splitting arguments with internal spaces, even when using `--`.
@@ -64,6 +65,8 @@ targetHostCmd() {
 ### Main ###
 
 # Ensure the local SSH directory exists
+# shellcheck disable=SC2174
+#                    ^^^^^^ -m only applies to deepest directory
 mkdir -m 0700 -p "$HOME"/.ssh
 
 # Build derivation
