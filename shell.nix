@@ -17,6 +17,6 @@ mkShell {
 
   shellHook = ''
     NIX_PATH=nixpkgs=${pkgs.path}
-    ${nix-pre-commit-hooks.pre-commit-check.shellHook}
+    ${pre-commit-check.shellHook}
   '';
 }
