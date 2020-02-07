@@ -8,8 +8,8 @@ variable "target_host" {
 }
 
 variable "ssh_private_key_file" {
-  description = "Private key used to connect to the target_host"
-  default     = ""
+  description = "Path to private key used to connect to the target_host. Ignored if `-` or empty."
+  default     = "-"
 }
 
 variable "NIX_PATH" {
@@ -72,6 +72,7 @@ locals {
     ],
     var.extra_build_args,
   )
+  ssh_private_key_file = var.ssh_private_key_file == "" ? "-" : var.ssh_private_key_file
 }
 
 # used to detect changes in the configuration
@@ -96,7 +97,7 @@ resource "null_resource" "deploy_nixos" {
     user  = var.target_user
     agent = true
     timeout = "100s"
-    private_key = var.ssh_private_key_file != "" ? file(var.ssh_private_key_file) : null
+    private_key = local.ssh_private_key_file != "-"  ? file(var.ssh_private_key_file) : null
   }
 
   # copy the secret keys to the host
@@ -134,7 +135,7 @@ resource "null_resource" "deploy_nixos" {
         "${path.module}/nixos-deploy.sh",
         data.external.nixos-instantiate.result["drv_path"],
         "${var.target_user}@${var.target_host}",
-        var.ssh_private_key_file,
+        local.ssh_private_key_file,
         "switch",
       ],
       local.extra_build_args
