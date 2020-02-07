@@ -20,7 +20,11 @@ resource "google_compute_firewall" "deploy-nixos" {
     ports    = ["22"]
   }
 
-  source_tags = ["nixos"]
+  // To vm tagged with: nixos
+  target_tags   = ["nixos"]
+  direction     = "INGRESS"
+  // From anywhere.
+  source_ranges = ["0.0.0.0/0"]
 }
 
 resource "google_compute_instance" "deploy-nixos" {
