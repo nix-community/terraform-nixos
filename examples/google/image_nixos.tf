@@ -2,8 +2,8 @@
 # instance
 
 module "nixos_image_1809" {
-  source  = "../../google_image_nixos"
-  version = "18.09"
+  source        = "../../google_image_nixos"
+  nixos_version = "18.09"
 }
 
 // This instance is not very useful since it doesn't contain any
