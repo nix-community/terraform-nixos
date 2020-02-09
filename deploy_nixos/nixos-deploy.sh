@@ -38,7 +38,7 @@ shift
 set -- "${@:1:$(($# - 1))}"
 buildArgs+=("$@")
 
-if [ -n "${sshPrivateKeyFile}" ]; then
+if [ -n "${sshPrivateKeyFile}" && "${sshPrivateKeyFile}" != "-"  ]; then
     sshOpts+=( -o "IdentityFile=${sshPrivateKeyFile}" )
 fi
 
