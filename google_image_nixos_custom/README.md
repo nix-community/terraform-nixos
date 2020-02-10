@@ -27,19 +27,27 @@ https://github.com/hashicorp/terraform/issues/15485 for related discussions.
 Only x86_64-linux is currently supported.
 
 <!-- terraform-docs-start -->
+## Providers
+
+| Name | Version |
+|------|---------|
+| external | n/a |
+| google | n/a |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| bucket\_name | Bucket where to store the image | string | - | yes |
-| gcp\_project\_id | The ID of the project in which the resource belongs. If it is not provided, the provider project is used. | string | `` | no |
-| licenses | A list of license URIs to apply to this image. Changing this forces a new resource to be created. | list | `<list>` | no |
-| nixos\_config | Path to a nixos configuration.nix file | string | - | yes |
+|------|-------------|------|---------|:-----:|
+| NIX\_PATH | Allow to pass custom NIX\_PATH. Ignored if `-` or empty. | `string` | `"-"` | no |
+| bucket\_name | Bucket where to store the image | `any` | n/a | yes |
+| gcp\_project\_id | The ID of the project in which the resource belongs. If it is not provided, the provider project is used. | `string` | `""` | no |
+| licenses | A list of license URIs to apply to this image. Changing this forces a new resource to be created. | `list(string)` | <pre>[<br>  "https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx"<br>]</pre> | no |
+| nixos\_config | Path to a nixos configuration.nix file | `any` | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| self\_link | - |
+| self\_link | n/a |
 
 <!-- terraform-docs-end -->

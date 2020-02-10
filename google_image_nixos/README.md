@@ -52,14 +52,20 @@ Run the `./update-url-map` script to fetch new image releases. Please submit a
 PR as well!
 
 <!-- terraform-docs-start -->
+## Providers
+
+| Name | Version |
+|------|---------|
+| google | n/a |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| gcp\_project\_id | The ID of the project in which the resource belongs. If it is not provided, the provider project is used. | string | `` | no |
-| licenses | A list of license URIs to apply to this image. Changing this forces a new resource to be created. | list | `<list>` | no |
-| url\_map | A map of release series to actual releases | map | `<map>` | no |
-| version | The NixOS version to use. Eg: 18.09 | string | `latest` | no |
+|------|-------------|------|---------|:-----:|
+| gcp\_project\_id | The ID of the project in which the resource belongs. If it is not provided, the provider project is used. | `string` | `""` | no |
+| licenses | A list of license URIs to apply to this image. Changing this forces a new resource to be created. | `list(string)` | <pre>[<br>  "https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx"<br>]</pre> | no |
+| nixos\_version | The NixOS version to use. Eg: 18.09 | `string` | `"latest"` | no |
+| url\_map | A map of release series to actual releases | `map(string)` | <pre>{<br>  "14.12": "https://nixos-cloud-images.storage.googleapis.com/nixos-14.12.471.1f09b77-x86_64-linux.raw.tar.gz",<br>  "15.09": "https://nixos-cloud-images.storage.googleapis.com/nixos-15.09.425.7870f20-x86_64-linux.raw.tar.gz",<br>  "16.03": "https://nixos-cloud-images.storage.googleapis.com/nixos-image-16.03.847.8688c17-x86_64-linux.raw.tar.gz",<br>  "17.03": "https://nixos-cloud-images.storage.googleapis.com/nixos-image-17.03.1082.4aab5c5798-x86_64-linux.raw.tar.gz",<br>  "18.03": "https://nixos-cloud-images.storage.googleapis.com/nixos-image-18.03.132536.fdb5ba4cdf9-x86_64-linux.raw.tar.gz",<br>  "18.09": "https://nixos-cloud-images.storage.googleapis.com/nixos-image-18.09.1228.a4c4cbb613c-x86_64-linux.raw.tar.gz",<br>  "latest": "https://nixos-cloud-images.storage.googleapis.com/nixos-image-18.09.1228.a4c4cbb613c-x86_64-linux.raw.tar.gz"<br>}</pre> | no |
 
 ## Outputs
 

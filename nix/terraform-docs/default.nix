@@ -2,7 +2,7 @@
 buildGoPackage rec {
   name = "${pname}-${version}";
   pname = "terraform-docs";
-  version = "0.5.0";
+  version = "0.8.2";
 
   goPackagePath = "github.com/segmentio/${pname}";
 
@@ -10,7 +10,7 @@ buildGoPackage rec {
     owner  = "segmentio";
     repo   = pname;
     rev    = "v${version}";
-    sha256 = "12w2yr669hk5kxdb9rrzsn8hwvx8rzrc1rmn8hs9l8z1bkfhr4gg";
+    sha256 = "0g85j43l6v2cwmymc1knbziyay8rarr9ynlsa7imjvwn4ib1926s";
   };
 
   preBuild = ''
