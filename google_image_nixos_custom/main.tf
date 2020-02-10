@@ -6,6 +6,12 @@ variable "nixos_config" {
   description = "Path to a nixos configuration.nix file"
 }
 
+variable "NIX_PATH" {
+  type        = string
+  description = "Allow to pass custom NIX_PATH. Ignored if `-` or empty."
+  default     = "-"
+}
+
 variable "gcp_project_id" {
   type        = string
   default     = ""
@@ -25,7 +31,10 @@ variable "licenses" {
 # ----------------------------------------------------
 
 data "external" "nix_build" {
-  program = ["${path.module}/nixos-build.sh", var.nixos_config]
+  program = concat(
+    ["${path.module}/nixos-build.sh", var.nixos_config],
+    var.NIX_PATH == "" || var.NIX_PATH == "-" ? [] : ["-I", var.NIX_PATH]
+  )
 }
 
 locals {
