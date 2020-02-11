@@ -92,3 +92,6 @@ output "self_link" {
   value = google_compute_image.nixos.self_link
 }
 
+output "NIX_PATH" {
+  value = var.NIX_PATH
+}
