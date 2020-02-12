@@ -31,10 +31,7 @@ variable "licenses" {
 # ----------------------------------------------------
 
 data "external" "nix_build" {
-  program = concat(
-    ["${path.module}/nixos-build.sh", var.nixos_config],
-    var.NIX_PATH == "" || var.NIX_PATH == "-" ? [] : ["-I", var.NIX_PATH]
-  )
+  program = ["${path.module}/nixos-build.sh", var.NIX_PATH, var.nixos_config]
 }
 
 locals {
