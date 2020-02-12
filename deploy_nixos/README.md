@@ -76,21 +76,28 @@ see also:
 * https://github.com/hashicorp/terraform/issues/17034
 
 <!-- terraform-docs-start -->
+## Providers
+
+| Name | Version |
+|------|---------|
+| external | n/a |
+| null | n/a |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| NIX\_PATH | Allow to pass custom NIX_PATH. Ignored if `-`. | string | `-` | no |
-| config | NixOS configuration to be evaluated. This argument is required unless 'nixos_config' is given | string | `` | no |
-| config\_pwd | Directory to evaluate the configuration in. This argument is required if 'config' is given | string | `` | no |
-| extra\_build\_args | List of arguments to pass to the nix builder | list | `<list>` | no |
-| extra\_eval\_args | List of arguments to pass to the nix evaluation | list | `<list>` | no |
-| keys | A map of filename to content to upload as secrets in /var/keys | map | `<map>` | no |
-| nixos\_config | Path to a NixOS configuration | string | `` | no |
-| target\_host | DNS host to deploy to | string | - | yes |
-| target\_user | SSH user used to connect to the target_host | string | `root` | no |
-| ssh_private_key_file | SSH private key used to connect to the target host | string | unset | no |
-| triggers | Triggers for deploy | map | `<map>` | no |
+|------|-------------|------|---------|:-----:|
+| NIX\_PATH | Allow to pass custom NIX\_PATH. Ignored if `-`. | `string` | `"-"` | no |
+| config | NixOS configuration to be evaluated. This argument is required unless 'nixos\_config' is given | `string` | `""` | no |
+| config\_pwd | Directory to evaluate the configuration in. This argument is required if 'config' is given | `string` | `""` | no |
+| extra\_build\_args | List of arguments to pass to the nix builder | `list(string)` | `[]` | no |
+| extra\_eval\_args | List of arguments to pass to the nix evaluation | `list(string)` | `[]` | no |
+| keys | A map of filename to content to upload as secrets in /var/keys | `map(string)` | `{}` | no |
+| nixos\_config | Path to a NixOS configuration | `string` | `""` | no |
+| ssh\_private\_key\_file | Path to private key used to connect to the target\_host. Ignored if `-` or empty. | `string` | `"-"` | no |
+| target\_host | DNS host to deploy to | `any` | n/a | yes |
+| target\_user | SSH user used to connect to the target\_host | `string` | `"root"` | no |
+| triggers | Triggers for deploy | `map(string)` | `{}` | no |
 
 ## Outputs
 

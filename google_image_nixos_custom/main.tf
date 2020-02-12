@@ -6,6 +6,12 @@ variable "nixos_config" {
   description = "Path to a nixos configuration.nix file"
 }
 
+variable "NIX_PATH" {
+  type        = string
+  description = "Allow to pass custom NIX_PATH. Ignored if `-` or empty."
+  default     = "-"
+}
+
 variable "gcp_project_id" {
   type        = string
   default     = ""
@@ -25,7 +31,7 @@ variable "licenses" {
 # ----------------------------------------------------
 
 data "external" "nix_build" {
-  program = ["${path.module}/nixos-build.sh", var.nixos_config]
+  program = ["${path.module}/nixos-build.sh", var.NIX_PATH, var.nixos_config]
 }
 
 locals {
@@ -83,3 +89,6 @@ output "self_link" {
   value = google_compute_image.nixos.self_link
 }
 
+output "NIX_PATH" {
+  value = var.NIX_PATH
+}

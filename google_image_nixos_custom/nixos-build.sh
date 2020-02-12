@@ -3,9 +3,15 @@
 # provider
 set -euo pipefail
 
-nixos_config=$(readlink -f "${1:-./configuration.nix}")
+nix_path="${1}"
+nixos_config=$(readlink -f "${2:-./configuration.nix}")
 
 shift
+shift
+
+if [[ -n "$nix_path" && "$nix_path" != "-" ]]; then
+  export NIX_PATH=$nix_path
+fi
 
 args=(
   --arg configuration "$nixos_config"
