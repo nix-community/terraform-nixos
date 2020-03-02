@@ -21,8 +21,8 @@ resource "google_compute_firewall" "deploy-nixos" {
   }
 
   // To vm tagged with: nixos
-  target_tags   = ["nixos"]
-  direction     = "INGRESS"
+  target_tags = ["nixos"]
+  direction   = "INGRESS"
   // From anywhere.
   source_ranges = ["0.0.0.0/0"]
 }

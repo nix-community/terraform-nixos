@@ -92,12 +92,12 @@ resource "null_resource" "deploy_nixos" {
   triggers = merge(var.triggers, local.triggers)
 
   connection {
-    type  = "ssh"
-    host  = var.target_host
-    user  = var.target_user
-    agent = true
-    timeout = "100s"
-    private_key = local.ssh_private_key_file != "-"  ? file(var.ssh_private_key_file) : null
+    type        = "ssh"
+    host        = var.target_host
+    user        = var.target_user
+    agent       = true
+    timeout     = "100s"
+    private_key = local.ssh_private_key_file != "-" ? file(var.ssh_private_key_file) : null
   }
 
   # copy the secret keys to the host
@@ -132,11 +132,11 @@ resource "null_resource" "deploy_nixos" {
   # do the actual deployment
   provisioner "local-exec" {
     interpreter = concat([
-        "${path.module}/nixos-deploy.sh",
-        data.external.nixos-instantiate.result["drv_path"],
-        "${var.target_user}@${var.target_host}",
-        local.ssh_private_key_file,
-        "switch",
+      "${path.module}/nixos-deploy.sh",
+      data.external.nixos-instantiate.result["drv_path"],
+      "${var.target_user}@${var.target_host}",
+      local.ssh_private_key_file,
+      "switch",
       ],
       local.extra_build_args
     )
