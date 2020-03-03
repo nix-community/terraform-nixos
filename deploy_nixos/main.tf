@@ -68,6 +68,12 @@ variable "keys" {
   default     = {}
 }
 
+variable "system" {
+  type = string
+  description = "Nix system string"
+  default = "x86_64-linux"
+}
+
 # --------------------------------------------------------------------------
 
 locals {
@@ -77,7 +83,7 @@ locals {
   }
 
   target_system_options = ["--argstr", "system", "${local.target_system}"]
-  target_system = "x86_64-linux"
+  target_system = var.system
 
   extra_build_args = concat([
     "--option", "substituters", data.external.nixos-instantiate.result["substituters"],
