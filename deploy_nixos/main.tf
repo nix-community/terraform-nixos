@@ -12,6 +12,12 @@ variable "ssh_private_key_file" {
   default     = "-"
 }
 
+variable "ssh_agent" {
+  description = "Whether to use an SSH agent"
+  type        = bool
+  default     = true
+}
+
 variable "NIX_PATH" {
   description = "Allow to pass custom NIX_PATH. Ignored if `-`."
   default     = "-"
@@ -95,7 +101,7 @@ resource "null_resource" "deploy_nixos" {
     type        = "ssh"
     host        = var.target_host
     user        = var.target_user
-    agent       = true
+    agent       = var.ssh_agent
     timeout     = "100s"
     private_key = local.ssh_private_key_file != "-" ? file(var.ssh_private_key_file) : null
   }
