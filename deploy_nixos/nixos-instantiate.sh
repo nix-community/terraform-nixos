@@ -5,9 +5,7 @@ set -euo pipefail
 nix_path=$1
 config=$2
 config_pwd=$3
-shift
-shift
-shift
+shift 3
 
 # Building the command
 command=(nix-instantiate --show-trace --expr '
@@ -20,6 +18,7 @@ command=(nix-instantiate --show-trace --expr '
     trusted-public-keys = concatStringsSep " " os.config.nix.binaryCachePublicKeys;
     drv_path = os.system.drvPath;
     out_path = os.system;
+    inherit (builtins) currentSystem;
   }')
 
 if [[ -f "$config" ]]; then

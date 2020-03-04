@@ -27,18 +27,18 @@ sshOpts=(
 ###  Argument parsing ###
 
 drvPath="$1"
-targetHost="$2"
-sshPrivateKeyFile="$3"
-action="$4"
-shift
-shift
-shift
-shift
+outPath="$2"
+targetHost="$3"
+buildOnTarget="$4"
+sshPrivateKeyFile="$5"
+action="$6"
+shift 6
+
 # remove the last argument
 set -- "${@:1:$(($# - 1))}"
 buildArgs+=("$@")
 
-if [ -n "${sshPrivateKeyFile}" && "${sshPrivateKeyFile}" != "-"  ]; then
+if [[ -n "${sshPrivateKeyFile}" && "${sshPrivateKeyFile}" != "-" ]]; then
     sshOpts+=( -o "IdentityFile=${sshPrivateKeyFile}" )
 fi
 
@@ -66,13 +66,28 @@ targetHostCmd() {
 # Ensure the local SSH directory exists
 mkdir -m 0700 -p "$HOME"/.ssh
 
-# Build derivation
-log "building nix code"
-outPath=$(nix-store --realize "$drvPath" "${buildArgs[@]}")
+if [[ "${buildOnTarget:-false}" == true ]]; then
 
-# Upload build results
-log "uploading build results"
-copyToTarget "$outPath" --gzip --use-substitutes
+  # Upload derivation
+  log "uploading derivations"
+  copyToTarget "$drvPath" --gzip --use-substitutes
+
+  # Build remotely
+  log "building on target"
+  set -x
+  targetHostCmd "nix-store" "--realize" "$drvPath" "${buildArgs[@]}"
+
+else
+
+  # Build derivation
+  log "building on deployer"
+  outPath=$(nix-store --realize "$drvPath" "${buildArgs[@]}")
+
+  # Upload build results
+  log "uploading build results"
+  copyToTarget "$outPath" --gzip --use-substitutes
+
+fi
 
 # Activate
 log "activating configuration"

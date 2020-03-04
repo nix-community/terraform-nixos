@@ -50,6 +50,12 @@ variable "extra_build_args" {
   default     = []
 }
 
+variable "build_on_target" {
+  type        = string
+  description = "Avoid building on the deployer. Must be true or false. Has no effect when deploying from an incompatible system. Unlike remote builders, this does not require the deploying user to be trusted by its host."
+  default     = false
+}
+
 variable "triggers" {
   type        = map(string)
   description = "Triggers for deploy"
@@ -62,6 +68,12 @@ variable "keys" {
   default     = {}
 }
 
+variable "target_system" {
+  type = string
+  description = "Nix system string"
+  default = "x86_64-linux"
+}
+
 # --------------------------------------------------------------------------
 
 locals {
@@ -70,8 +82,6 @@ locals {
     deploy_nixos_keys = sha256(jsonencode(var.keys))
   }
 
-  target_system = ["--argstr", "system", "x86_64-linux"]
-
   extra_build_args = concat([
     "--option", "substituters", data.external.nixos-instantiate.result["substituters"],
     "--option", "trusted-public-keys", data.external.nixos-instantiate.result["trusted-public-keys"],
@@ -79,6 +89,7 @@ locals {
     var.extra_build_args,
   )
   ssh_private_key_file = var.ssh_private_key_file == "" ? "-" : var.ssh_private_key_file
+  build_on_target = data.external.nixos-instantiate.result["currentSystem"] != var.target_system ? true : tobool(var.build_on_target)
 }
 
 # used to detect changes in the configuration
@@ -88,8 +99,10 @@ data "external" "nixos-instantiate" {
     var.NIX_PATH,
     var.config != "" ? var.config : var.nixos_config,
     var.config_pwd != "" ? var.config_pwd : ".",
+    # end of positional arguments
+    # start of pass-through arguments
+    "--argstr", "system", "${var.target_system}"
     ],
-    local.target_system,
     var.extra_eval_args,
   )
 }
@@ -140,7 +153,9 @@ resource "null_resource" "deploy_nixos" {
     interpreter = concat([
       "${path.module}/nixos-deploy.sh",
       data.external.nixos-instantiate.result["drv_path"],
+      data.external.nixos-instantiate.result["out_path"],
       "${var.target_user}@${var.target_host}",
+      local.build_on_target,
       local.ssh_private_key_file,
       "switch",
       ],
