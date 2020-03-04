@@ -27,17 +27,13 @@ sshOpts=(
 ###  Argument parsing ###
 
 drvPath="$1"
-shift
-outPath="$1"
-shift
-targetHost="$1"
-shift
-buildOnTarget="$1"
-shift
-sshPrivateKeyFile="$1"
-shift
-action="$1"
-shift
+outPath="$2"
+targetHost="$3"
+buildOnTarget="$4"
+sshPrivateKeyFile="$5"
+action="$6"
+shift 6
+
 # remove the last argument
 set -- "${@:1:$(($# - 1))}"
 buildArgs+=("$@")
