@@ -68,7 +68,7 @@ variable "keys" {
   default     = {}
 }
 
-variable "system" {
+variable "target_system" {
   type = string
   description = "Nix system string"
   default = "x86_64-linux"
@@ -82,9 +82,6 @@ locals {
     deploy_nixos_keys = sha256(jsonencode(var.keys))
   }
 
-  target_system_options = ["--argstr", "system", "${local.target_system}"]
-  target_system = var.system
-
   extra_build_args = concat([
     "--option", "substituters", data.external.nixos-instantiate.result["substituters"],
     "--option", "trusted-public-keys", data.external.nixos-instantiate.result["trusted-public-keys"],
@@ -92,7 +89,7 @@ locals {
     var.extra_build_args,
   )
   ssh_private_key_file = var.ssh_private_key_file == "" ? "-" : var.ssh_private_key_file
-  build_on_target = data.external.nixos-instantiate.result["currentSystem"] != local.target_system ? true : tobool(var.build_on_target)
+  build_on_target = data.external.nixos-instantiate.result["currentSystem"] != var.target_system ? true : tobool(var.build_on_target)
 }
 
 # used to detect changes in the configuration
@@ -102,8 +99,10 @@ data "external" "nixos-instantiate" {
     var.NIX_PATH,
     var.config != "" ? var.config : var.nixos_config,
     var.config_pwd != "" ? var.config_pwd : ".",
+    # end of positional arguments
+    # start of pass-through arguments
+    "--argstr", "system", "${var.target_system}"
     ],
-    local.target_system_options,
     var.extra_eval_args,
   )
 }
