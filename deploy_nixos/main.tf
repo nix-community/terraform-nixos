@@ -52,7 +52,7 @@ variable "extra_build_args" {
 
 variable "build_on_target" {
   type        = string
-  description = "Avoid building on the deployer. Must be true or false. Has no effect when deploying from an incompatible system."
+  description = "Avoid building on the deployer. Must be true or false. Has no effect when deploying from an incompatible system. Unlike remote builders, this does not require the deploying user to be trusted by its host."
   default     = false
 }
 
