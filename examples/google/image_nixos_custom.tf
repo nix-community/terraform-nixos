@@ -15,7 +15,7 @@ resource "google_storage_bucket" "nixos-images" {
 # auto-scaler with system images
 module "nixos_image_custom" {
   source      = "../../google_image_nixos_custom"
-  bucket_name = "${google_storage_bucket.nixos-images.name}"
+  bucket_name = google_storage_bucket.nixos-images.name
 
   nixos_config = "${path.module}/image_nixos_custom.nix"
 }
