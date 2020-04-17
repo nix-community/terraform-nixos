@@ -97,3 +97,8 @@ targetHostCmd "$outPath/bin/switch-to-configuration" "$action"
 # Cleanup previous generations
 log "collecting old nix derivations"
 targetHostCmd "nix-collect-garbage" "-d"
+
+# Close ssh multiplex-master process gracefully
+log "closing persistent ssh-connection"
+sshOpts+=( -O "stop" )
+ssh "${sshOpts[@]}" "$targetHost"
