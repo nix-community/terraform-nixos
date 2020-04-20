@@ -10,10 +10,11 @@ buildArgs=(
   --option extra-binary-caches https://cache.nixos.org/
 )
 profile=/nix/var/nix/profiles/system
+# will be set later
+controlPath=
 sshOpts=(
   -o "ControlMaster=auto"
   -o "ControlPersist=60"
-  -o "ControlPath=${HOME}/.ssh/deploy_nixos_%C"
   # Avoid issues with IP re-use. This disable TOFU security.
   -o "StrictHostKeyChecking=no"
   -o "UserKnownHostsFile=/dev/null"
@@ -61,10 +62,30 @@ targetHostCmd() {
   ssh "${sshOpts[@]}" "$targetHost" "./maybe-sudo.sh ${*@Q}"
 }
 
+# Setup a temporary ControlPath for this session. This speeds-up the
+# operations by not re-creating SSH sessions between each command. At the end
+# of the run, the session is forcefully terminated.
+setupControlPath() {
+  controlPath=$(mktemp)
+  sshOpts+=(
+    -o "ControlPath=$controlPath"
+  )
+  cleanupControlPath() {
+    local ret=$?
+    # Avoid failing during the shutdown
+    set +e
+    # Close ssh multiplex-master process gracefully
+    log "closing persistent ssh-connection"
+    ssh "${sshOpts[@]}" -O stop "$targetHost"
+    rm -f "$controlPath"
+    exit "$ret"
+  }
+  trap cleanupControlPath EXIT
+}
+
 ### Main ###
 
-# Ensure the local SSH directory exists
-mkdir -m 0700 -p "$HOME"/.ssh
+setupControlPath
 
 if [[ "${buildOnTarget:-false}" == true ]]; then
 
