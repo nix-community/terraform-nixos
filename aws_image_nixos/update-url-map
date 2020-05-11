@@ -20,7 +20,7 @@ def render_tf():
   out.write(dedent("""\
     # DON'T EDIT, run '%s' instead
     variable "url_map" {
-      type = "map"
+      type = map(string)
 
       default = {
   """ % __file__))
