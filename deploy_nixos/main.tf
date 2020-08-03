@@ -7,6 +7,12 @@ variable "target_host" {
   description = "DNS host to deploy to"
 }
 
+variable "target_port" {
+  description = "SSH port used to connect to the target_host"
+  type        = number
+  default     = 22
+}
+
 variable "ssh_private_key_file" {
   description = "Path to private key used to connect to the target_host. Ignored if `-` or empty."
   default     = "-"
@@ -113,6 +119,7 @@ resource "null_resource" "deploy_nixos" {
   connection {
     type        = "ssh"
     host        = var.target_host
+    port        = var.target_port
     user        = var.target_user
     agent       = var.ssh_agent
     timeout     = "100s"
@@ -155,6 +162,7 @@ resource "null_resource" "deploy_nixos" {
       data.external.nixos-instantiate.result["drv_path"],
       data.external.nixos-instantiate.result["out_path"],
       "${var.target_user}@${var.target_host}",
+      "${var.target_port}",
       local.build_on_target,
       local.ssh_private_key_file,
       "switch",
