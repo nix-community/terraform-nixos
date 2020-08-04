@@ -30,14 +30,17 @@ sshOpts=(
 drvPath="$1"
 outPath="$2"
 targetHost="$3"
-buildOnTarget="$4"
-sshPrivateKeyFile="$5"
-action="$6"
-shift 6
+targetPort="$4"
+buildOnTarget="$5"
+sshPrivateKeyFile="$6"
+action="$7"
+shift 7
 
 # remove the last argument
 set -- "${@:1:$(($# - 1))}"
 buildArgs+=("$@")
+
+sshOpts+=( -p "${targetPort}" )
 
 if [[ -n "${sshPrivateKeyFile}" && "${sshPrivateKeyFile}" != "-" ]]; then
     sshOpts+=( -o "IdentityFile=${sshPrivateKeyFile}" )
