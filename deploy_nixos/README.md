@@ -43,6 +43,12 @@ under certain conditions:
 
 This would typically be provisioned in the base image.
 
+### Binary cache configuration
+
+One thing that might be surprising is that the binary caches (aka
+substituters) are taken from the machine configuration. This implies that the
+user Nix configuration will be ignored in that regard.
+
 ## Dependencies
 
 * `bash` 4.0+
