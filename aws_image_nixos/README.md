@@ -18,7 +18,7 @@ supported.
     }
 
     resource "aws_instance" "example" {
-      ami           = "${module.nixos_image_1903.ami}"
+      ami           = module.nixos_image_1903.ami
       instance_type = "t2.micro"
 
       ...

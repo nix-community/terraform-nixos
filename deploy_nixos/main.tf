@@ -107,7 +107,7 @@ data "external" "nixos-instantiate" {
     var.config_pwd != "" ? var.config_pwd : ".",
     # end of positional arguments
     # start of pass-through arguments
-    "--argstr", "system", "${var.target_system}"
+    "--argstr", "system", var.target_system
     ],
     var.extra_eval_args,
   )
@@ -162,7 +162,7 @@ resource "null_resource" "deploy_nixos" {
       data.external.nixos-instantiate.result["drv_path"],
       data.external.nixos-instantiate.result["out_path"],
       "${var.target_user}@${var.target_host}",
-      "${var.target_port}",
+      var.target_port,
       local.build_on_target,
       local.ssh_private_key_file,
       "switch",

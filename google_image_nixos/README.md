@@ -22,7 +22,7 @@ resource "google_compute_instance" "example" {
 
   boot_disk {
     initialize_params {
-      image = "${module.nixos_image_1809.self_link}"
+      image = module.nixos_image_1809.self_link
     }
   }
 
