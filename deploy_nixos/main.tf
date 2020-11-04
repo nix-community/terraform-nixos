@@ -162,7 +162,7 @@ resource "null_resource" "deploy_nixos" {
       data.external.nixos-instantiate.result["drv_path"],
       data.external.nixos-instantiate.result["out_path"],
       "${var.target_user}@${var.target_host}",
-      "${var.target_port}",
+      var.target_port,
       local.build_on_target,
       local.ssh_private_key_file,
       "switch",
