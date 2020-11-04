@@ -107,7 +107,7 @@ data "external" "nixos-instantiate" {
     var.config_pwd != "" ? var.config_pwd : ".",
     # end of positional arguments
     # start of pass-through arguments
-    "--argstr", "system", "${var.target_system}"
+    "--argstr", "system", var.target_system
     ],
     var.extra_eval_args,
   )
