@@ -14,4 +14,3 @@ variable "url_map" {
 
   description = "A map of release series to actual releases"
 }
-

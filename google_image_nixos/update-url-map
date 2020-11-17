@@ -15,7 +15,7 @@ def render_tf
   out = <<~HEADER
     # DON'T EDIT, run $0 instead
     variable "url_map" {
-      type = "map"
+      type = map(string)
 
       default = {
   HEADER
