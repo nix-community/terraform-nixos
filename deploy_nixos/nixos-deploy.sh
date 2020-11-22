@@ -47,6 +47,7 @@ trap 'rm -rf "$workDir"' EXIT
 if [[ -n "${sshPrivateKey}" && "${sshPrivateKey}" != "-" ]]; then
   sshPrivateKeyFile="$workDir/ssh_key"
   echo "$sshPrivateKey" > "$sshPrivateKeyFile"
+  chmod 0700 "$sshPrivateKeyFile"
   sshOpts+=( -o "IdentityFile=${sshPrivateKeyFile}" )
 fi
 
