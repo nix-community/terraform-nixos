@@ -99,7 +99,7 @@ see also:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| NIX\_PATH | Allow to pass custom NIX\_PATH. Ignored if `-`. | `string` | `"-"` | no |
+| NIX\_PATH | Allow to pass custom NIX\_PATH | `string` | `""` | no |
 | build\_on\_target | Avoid building on the deployer. Must be true or false. Has no effect when deploying from an incompatible system. Unlike remote builders, this does not require the deploying user to be trusted by its host. | `string` | `false` | no |
 | config | NixOS configuration to be evaluated. This argument is required unless 'nixos\_config' is given | `string` | `""` | no |
 | config\_pwd | Directory to evaluate the configuration in. This argument is required if 'config' is given | `string` | `""` | no |
@@ -107,9 +107,10 @@ see also:
 | extra\_eval\_args | List of arguments to pass to the nix evaluation | `list(string)` | `[]` | no |
 | keys | A map of filename to content to upload as secrets in /var/keys | `map(string)` | `{}` | no |
 | nixos\_config | Path to a NixOS configuration | `string` | `""` | no |
-| ssh\_agent | Whether to use an SSH agent | `bool` | `true` | no |
-| ssh\_private\_key\_file | Path to private key used to connect to the target\_host. Ignored if `-` or empty. | `string` | `"-"` | no |
-| target\_host | DNS host to deploy to | `any` | n/a | yes |
+| ssh\_agent | Whether to use an SSH agent. True if not ssh\_private\_key is passed | `bool` | `null` | no |
+| ssh\_private\_key | Content of private key used to connect to the target\_host | `string` | `""` | no |
+| ssh\_private\_key\_file | Path to private key used to connect to the target\_host | `string` | `""` | no |
+| target\_host | DNS host to deploy to | `string` | n/a | yes |
 | target\_port | SSH port used to connect to the target\_host | `number` | `22` | no |
 | target\_system | Nix system string | `string` | `"x86_64-linux"` | no |
 | target\_user | SSH user used to connect to the target\_host | `string` | `"root"` | no |
