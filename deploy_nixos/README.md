@@ -108,7 +108,6 @@ see also:
 | keys | A map of filename to content to upload as secrets in /var/keys | `map(string)` | `{}` | no |
 | nixos\_config | Path to a NixOS configuration | `string` | `""` | no |
 | ssh\_agent | Whether to use an SSH agent | `bool` | `true` | no |
-| ssh\_private\_key | Content of private key used to connect to the target\_host. Ignored if empty. | `string` | `""` | no |
 | ssh\_private\_key\_file | Path to private key used to connect to the target\_host. Ignored if `-` or empty. | `string` | `"-"` | no |
 | target\_host | DNS host to deploy to | `any` | n/a | yes |
 | target\_port | SSH port used to connect to the target\_host | `number` | `22` | no |

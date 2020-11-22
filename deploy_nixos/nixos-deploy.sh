@@ -11,6 +11,7 @@ buildArgs=(
 )
 profile=/nix/var/nix/profiles/system
 # will be set later
+controlPath=
 sshOpts=(
   -o "ControlMaster=auto"
   -o "ControlPersist=60"
@@ -31,7 +32,7 @@ outPath="$2"
 targetHost="$3"
 targetPort="$4"
 buildOnTarget="$5"
-sshPrivateKey="$6"
+sshPrivateKeyFile="$6"
 action="$7"
 shift 7
 
@@ -41,13 +42,8 @@ buildArgs+=("$@")
 
 sshOpts+=( -p "${targetPort}" )
 
-workDir=$(mktemp -d)
-trap 'rm -rf "$workDir"' EXIT
-
-if [[ -n "${sshPrivateKey}" ]]; then
-  sshPrivateKeyFile="$workDir/ssh_key"
-  echo "$sshPrivateKey" > "$sshPrivateKeyFile"
-  sshOpts+=( -o "IdentityFile=${sshPrivateKeyFile}" )
+if [[ -n "${sshPrivateKeyFile}" && "${sshPrivateKeyFile}" != "-" ]]; then
+    sshOpts+=( -o "IdentityFile=${sshPrivateKeyFile}" )
 fi
 
 ### Functions ###
@@ -66,8 +62,6 @@ targetHostCmd() {
   # `ssh` did not properly maintain the array nature of the command line,
   # erroneously splitting arguments with internal spaces, even when using `--`.
   # Tested with OpenSSH_7.9p1.
-  #
-  # shellcheck disable=SC2029
   ssh "${sshOpts[@]}" "$targetHost" "./maybe-sudo.sh ${*@Q}"
 }
 
@@ -75,8 +69,9 @@ targetHostCmd() {
 # operations by not re-creating SSH sessions between each command. At the end
 # of the run, the session is forcefully terminated.
 setupControlPath() {
+  controlPath=$(mktemp)
   sshOpts+=(
-    -o "ControlPath=$workDir/ssh_control"
+    -o "ControlPath=$controlPath"
   )
   cleanupControlPath() {
     local ret=$?
@@ -85,7 +80,7 @@ setupControlPath() {
     # Close ssh multiplex-master process gracefully
     log "closing persistent ssh-connection"
     ssh "${sshOpts[@]}" -O stop "$targetHost"
-    rm -rf "$workDir"
+    rm -f "$controlPath"
     exit "$ret"
   }
   trap cleanupControlPath EXIT
