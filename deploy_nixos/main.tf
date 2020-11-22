@@ -1,58 +1,71 @@
+variable "target_host" {
+  type        = string
+  description = "DNS host to deploy to"
+}
+
 variable "target_user" {
+  type        = string
   description = "SSH user used to connect to the target_host"
   default     = "root"
 }
 
-variable "target_host" {
-  description = "DNS host to deploy to"
-}
-
 variable "target_port" {
-  description = "SSH port used to connect to the target_host"
   type        = number
+  description = "SSH port used to connect to the target_host"
   default     = 22
 }
 
+variable "ssh_private_key" {
+  type        = string
+  description = "Content of private key used to connect to the target_host"
+  default     = ""
+}
+
 variable "ssh_private_key_file" {
-  description = "Path to private key used to connect to the target_host. Ignored if `-` or empty."
-  default     = "-"
+  type        = string
+  description = "Path to private key used to connect to the target_host"
+  default     = ""
 }
 
 variable "ssh_agent" {
-  description = "Whether to use an SSH agent"
   type        = bool
-  default     = true
+  description = "Whether to use an SSH agent. True if not ssh_private_key is passed"
+  default     = null
 }
 
 variable "NIX_PATH" {
-  description = "Allow to pass custom NIX_PATH. Ignored if `-`."
-  default     = "-"
+  type        = string
+  description = "Allow to pass custom NIX_PATH"
+  default     = ""
 }
 
 variable "nixos_config" {
+  type        = string
   description = "Path to a NixOS configuration"
   default     = ""
 }
 
 variable "config" {
+  type        = string
   description = "NixOS configuration to be evaluated. This argument is required unless 'nixos_config' is given"
   default     = ""
 }
 
 variable "config_pwd" {
+  type        = string
   description = "Directory to evaluate the configuration in. This argument is required if 'config' is given"
   default     = ""
 }
 
 variable "extra_eval_args" {
-  description = "List of arguments to pass to the nix evaluation"
   type        = list(string)
+  description = "List of arguments to pass to the nix evaluation"
   default     = []
 }
 
 variable "extra_build_args" {
-  description = "List of arguments to pass to the nix builder"
   type        = list(string)
+  description = "List of arguments to pass to the nix builder"
   default     = []
 }
 
@@ -75,9 +88,9 @@ variable "keys" {
 }
 
 variable "target_system" {
-  type = string
+  type        = string
   description = "Nix system string"
-  default = "x86_64-linux"
+  default     = "x86_64-linux"
 }
 
 # --------------------------------------------------------------------------
@@ -95,16 +108,18 @@ locals {
     var.extra_build_args,
   )
   ssh_private_key_file = var.ssh_private_key_file == "" ? "-" : var.ssh_private_key_file
-  build_on_target = data.external.nixos-instantiate.result["currentSystem"] != var.target_system ? true : tobool(var.build_on_target)
+  ssh_private_key      = local.ssh_private_key_file == "-" ? var.ssh_private_key : file(local.ssh_private_key_file)
+  ssh_agent            = var.ssh_agent == null ? (local.ssh_private_key != "") : var.ssh_agent
+  build_on_target      = data.external.nixos-instantiate.result["currentSystem"] != var.target_system ? true : tobool(var.build_on_target)
 }
 
 # used to detect changes in the configuration
 data "external" "nixos-instantiate" {
   program = concat([
     "${path.module}/nixos-instantiate.sh",
-    var.NIX_PATH,
+    var.NIX_PATH == "" ? "-" : var.NIX_PATH,
     var.config != "" ? var.config : var.nixos_config,
-    var.config_pwd != "" ? var.config_pwd : ".",
+    var.config_pwd == "" ? "." : var.config_pwd,
     # end of positional arguments
     # start of pass-through arguments
     "--argstr", "system", var.target_system
@@ -121,12 +136,11 @@ resource "null_resource" "deploy_nixos" {
     host        = var.target_host
     port        = var.target_port
     user        = var.target_user
-    agent       = var.ssh_agent
+    agent       = local.ssh_agent
     timeout     = "100s"
-    private_key = local.ssh_private_key_file != "-" ? file(var.ssh_private_key_file) : null
+    private_key = local.ssh_private_key == "-" ? "" : local.ssh_private_key
   }
 
-  # copy the secret keys to the host
   # copy the secret keys to the host
   provisioner "file" {
     content     = jsonencode(var.keys)
@@ -134,13 +148,11 @@ resource "null_resource" "deploy_nixos" {
   }
 
   # FIXME: move this to nixos-deploy.sh
-  # FIXME: move this to nixos-deploy.sh
   provisioner "file" {
     source      = "${path.module}/unpack-keys.sh"
     destination = "unpack-keys.sh"
   }
 
-  # FIXME: move this to nixos-deploy.sh
   # FIXME: move this to nixos-deploy.sh
   provisioner "file" {
     source      = "${path.module}/maybe-sudo.sh"
@@ -155,7 +167,6 @@ resource "null_resource" "deploy_nixos" {
   }
 
   # do the actual deployment
-  # do the actual deployment
   provisioner "local-exec" {
     interpreter = concat([
       "${path.module}/nixos-deploy.sh",
@@ -164,7 +175,7 @@ resource "null_resource" "deploy_nixos" {
       "${var.target_user}@${var.target_host}",
       var.target_port,
       local.build_on_target,
-      local.ssh_private_key_file,
+      local.ssh_private_key == "" ? "-" : local.ssh_private_key,
       "switch",
       ],
       local.extra_build_args
