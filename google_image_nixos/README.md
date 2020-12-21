@@ -11,7 +11,7 @@ supported per Google Cloud project.
 
 ```hcl
 module "nixos_image_1809" {
-  source = "github.com/zimbatm/terraform-nix/google_image_nixos"
+  source = "github.com/zimbatm/terraform-nixos/google_image_nixos"
   release = "18.09"
 }
 
