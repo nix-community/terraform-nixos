@@ -74,7 +74,7 @@ module "deploy_nixos" {
     instance_id = google_compute_instance.deploy-nixos.id
   }
 
-  // Pass some secrets. See the terraform-servets-provider to handle secrets
+  // Pass some secrets. See the terraform-provider-secret to handle secrets
   // in Terraform
   keys = {
     foo = "bar"
