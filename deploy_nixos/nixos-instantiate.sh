@@ -21,8 +21,19 @@ command=(nix-instantiate --show-trace --expr '
     inherit (builtins) currentSystem;
   }')
 
+if readlink --version | grep GNU; then
+  readlink="readlink -f"
+else
+  if command -v greadlink &> /dev/null; then
+    readlink="greadlink -f"
+  else
+    echo "Warning: symlinks not supported because readlink is non GNU" >&2
+    readlink="realpath"
+  fi
+fi
+
 if [[ -f "$config" ]]; then
-  config=$(readlink -f "$config")
+  config=$($readlink "$config")
   command+=(--argstr configuration "$config")
 else
   command+=(--arg configuration "$config")
@@ -37,7 +48,7 @@ if [[ -n "$nix_path" && "$nix_path" != "-" ]]; then
 fi
 
 # Changing directory
-cd "$(readlink -f "$config_pwd")"
+cd "$($readlink "$config_pwd")"
 
 # Instantiate
 echo "running (instantiating): ${NIX_PATH:+NIX_PATH=$NIX_PATH} ${command[*]@Q}" -A out_path >&2
