@@ -93,6 +93,12 @@ variable "target_system" {
   default     = "x86_64-linux"
 }
 
+variable "hermetic" {
+  type        = bool
+  description = "Treat the provided nixos configuration as a hermetic expression and do not evaluate using the ambient system nixpkgs. Useful if you customize eval-modules or use a pinned nixpkgs."
+  default     = false
+}
+
 # --------------------------------------------------------------------------
 
 locals {
@@ -122,7 +128,8 @@ data "external" "nixos-instantiate" {
     var.config_pwd == "" ? "." : var.config_pwd,
     # end of positional arguments
     # start of pass-through arguments
-    "--argstr", "system", var.target_system
+    "--argstr", "system", var.target_system,
+    "--arg", "hermetic", var.hermetic
     ],
     var.extra_eval_args,
   )
