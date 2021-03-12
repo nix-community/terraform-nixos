@@ -19,17 +19,14 @@ command=(nix-instantiate --show-trace --expr '
       if hermetic
         then import configuration
         else import <nixpkgs/nixos> { inherit system configuration; };
-
-    inherit (os.pkgs) lib;
-
   in {
     inherit (builtins) currentSystem;
 
     substituters =
-      lib.concatStringsSep " " os.config.nix.binaryCaches;
+      builtins.concatStringsSep " " os.config.nix.binaryCaches;
 
     trusted-public-keys =
-      lib.concatStringsSep " " os.config.nix.binaryCachePublicKeys;
+      builtins.concatStringsSep " " os.config.nix.binaryCachePublicKeys;
 
     drv_path = os.system.drvPath;
     out_path = os.system;
