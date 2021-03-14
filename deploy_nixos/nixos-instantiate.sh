@@ -8,17 +8,28 @@ config_pwd=$3
 shift 3
 
 # Building the command
+nixExpression=<<EOF
+
+EOF
+
 command=(nix-instantiate --show-trace --expr '
-  { system, configuration, ... }:
+  { system, configuration, hermetic ? false, ... }:
   let
-    os = import <nixpkgs/nixos> { inherit system configuration; };
-    inherit (import <nixpkgs/lib>) concatStringsSep;
+    os =
+      if hermetic
+        then import configuration
+        else import <nixpkgs/nixos> { inherit system configuration; };
   in {
-    substituters = concatStringsSep " " os.config.nix.binaryCaches;
-    trusted-public-keys = concatStringsSep " " os.config.nix.binaryCachePublicKeys;
+    inherit (builtins) currentSystem;
+
+    substituters =
+      builtins.concatStringsSep " " os.config.nix.binaryCaches;
+
+    trusted-public-keys =
+      builtins.concatStringsSep " " os.config.nix.binaryCachePublicKeys;
+
     drv_path = os.system.drvPath;
     out_path = os.system;
-    inherit (builtins) currentSystem;
   }')
 
 if readlink --version | grep GNU; then
