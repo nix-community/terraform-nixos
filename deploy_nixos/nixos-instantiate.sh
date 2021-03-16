@@ -7,10 +7,6 @@ config=$2
 config_pwd=$3
 shift 3
 
-# Building the command
-nixExpression=<<EOF
-
-EOF
 
 command=(nix-instantiate --show-trace --expr '
   { system, configuration, hermetic ? false, ... }:
@@ -32,7 +28,7 @@ command=(nix-instantiate --show-trace --expr '
     out_path = os.system;
   }')
 
-if readlink --version | grep GNU; then
+if readlink --version | grep -q GNU; then
   readlink="readlink -f"
 else
   if command -v greadlink &> /dev/null; then
