@@ -9,7 +9,8 @@ variable "url_map" {
     "17.03"  = "https://nixos-cloud-images.storage.googleapis.com/nixos-image-17.03.1082.4aab5c5798-x86_64-linux.raw.tar.gz"
     "18.03"  = "https://nixos-cloud-images.storage.googleapis.com/nixos-image-18.03.132536.fdb5ba4cdf9-x86_64-linux.raw.tar.gz"
     "18.09"  = "https://nixos-cloud-images.storage.googleapis.com/nixos-image-18.09.1228.a4c4cbb613c-x86_64-linux.raw.tar.gz"
-    "latest" = "https://nixos-cloud-images.storage.googleapis.com/nixos-image-18.09.1228.a4c4cbb613c-x86_64-linux.raw.tar.gz"
+    "20.03"  = "https://nixos-images.storage.googleapis.com/google-cloud-nixos-20.03.1639.73e73c7d6b5.raw.tar.gz"
+    "latest" = "https://nixos-images.storage.googleapis.com/google-cloud-nixos-20.03.1639.73e73c7d6b5.raw.tar.gz"
   }
 
   description = "A map of release series to actual releases"
