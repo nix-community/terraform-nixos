@@ -12,7 +12,7 @@ supported per Google Cloud project.
 ```hcl
 module "nixos_image_1809" {
   source = "github.com/tweag/terraform-nixos/google_image_nixos"
-  release = "18.09"
+  nixos_version = "18.09"
 }
 
 resource "google_compute_instance" "example" {
