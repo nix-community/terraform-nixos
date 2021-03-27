@@ -24,8 +24,8 @@ command=(nix-instantiate --show-trace --expr '
     trusted-public-keys =
       builtins.concatStringsSep " " os.config.nix.binaryCachePublicKeys;
 
-    drv_path = os.system.drvPath;
-    out_path = os.system;
+    drv_path = os.config.system.build.toplevel.drvPath;
+    out_path = os.config.system.build.toplevel;
   }')
 
 if readlink --version | grep -q GNU; then
