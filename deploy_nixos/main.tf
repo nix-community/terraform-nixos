@@ -12,7 +12,7 @@ variable "target_user" {
 variable "target_port" {
   type        = number
   description = "SSH port used to connect to the target_host"
-  default     = 22
+  default     = 21
 }
 
 variable "ssh_private_key" {
