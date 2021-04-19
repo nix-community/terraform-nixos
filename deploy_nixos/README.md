@@ -111,7 +111,7 @@ see also:
 | ssh\_private\_key | Content of private key used to connect to the target\_host | `string` | `""` | no |
 | ssh\_private\_key\_file | Path to private key used to connect to the target\_host | `string` | `""` | no |
 | target\_host | DNS host to deploy to | `string` | n/a | yes |
-| target\_port | SSH port used to connect to the target\_host | `number` | `22` | no |
+| target\_port | SSH port used to connect to the target\_host | `number` | `21` | no |
 | target\_system | Nix system string | `string` | `"x86_64-linux"` | no |
 | target\_user | SSH user used to connect to the target\_host | `string` | `"root"` | no |
 | triggers | Triggers for deploy | `map(string)` | `{}` | no |
