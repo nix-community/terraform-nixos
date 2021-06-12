@@ -106,6 +106,7 @@ see also:
 | extra\_build\_args | List of arguments to pass to the nix builder | `list(string)` | `[]` | no |
 | extra\_eval\_args | List of arguments to pass to the nix evaluation | `list(string)` | `[]` | no |
 | hermetic | Treat the provided nixos configuration as a hermetic expression and do not evaluate using the ambient system nixpkgs. Useful if you customize eval-modules or use a pinned nixpkgs. | `bool` | false | no |
+| arguments | Attribute set passed to hermetic configuration if it is a function. | `map(any)` | `{}` | no |
 | keys | A map of filename to content to upload as secrets in /var/keys | `map(string)` | `{}` | no |
 | nixos\_config | Path to a NixOS configuration | `string` | `""` | no |
 | ssh\_agent | Whether to use an SSH agent. True if not ssh\_private\_key is passed | `bool` | `null` | no |

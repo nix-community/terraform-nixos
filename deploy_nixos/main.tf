@@ -81,6 +81,12 @@ variable "triggers" {
   default     = {}
 }
 
+variable "arguments" {
+  type        = map(any)
+  description = "A map of values to pass to the Nix expression. It only works form 'hermetic' configurations. For secrets, use 'keys' instead."
+  default     = {}
+}
+
 variable "keys" {
   type        = map(string)
   description = "A map of filename to content to upload as secrets in /var/keys"
@@ -129,7 +135,8 @@ data "external" "nixos-instantiate" {
     # end of positional arguments
     # start of pass-through arguments
     "--argstr", "system", var.target_system,
-    "--arg", "hermetic", var.hermetic
+    "--arg", "hermetic", var.hermetic,
+    "--argstr", "argumentsJson", jsonencode(var.arguments)
     ],
     var.extra_eval_args,
   )
@@ -197,4 +204,3 @@ output "id" {
   description = "random ID that changes on every nixos deployment"
   value       = null_resource.deploy_nixos.id
 }
-

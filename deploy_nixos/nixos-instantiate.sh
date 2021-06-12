@@ -9,11 +9,19 @@ shift 3
 
 
 command=(nix-instantiate --show-trace --expr '
-  { system, configuration, hermetic ? false, ... }:
+  { system, configuration, hermetic ? false, argumentsJson, ... }:
   let
+    arguments = builtins.fromJSON argumentsJson;
+
     os =
       if hermetic
-        then import configuration
+        then
+          let
+            config = import configuration;
+          in
+          if builtins.isFunction config
+            then config arguments
+            else config
         else import <nixpkgs/nixos> { inherit system configuration; };
   in {
     inherit (builtins) currentSystem;
