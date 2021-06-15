@@ -99,6 +99,12 @@ variable "hermetic" {
   default     = false
 }
 
+variable "delete_older_than" {
+  type        = string
+  description = "Can be a list of generation numbers, the special value old to delete all non-current generations, a value such as 30d to delete all generations older than the specified number of days (except for the generation that was active at that point in time), or a value such as +5 to keep the last 5 generations ignoring any newer than current, e.g., if 30 is the current generation +5 will delete generation 25 and all older generations."
+  default     = "+1"
+}
+
 # --------------------------------------------------------------------------
 
 locals {
@@ -184,6 +190,7 @@ resource "null_resource" "deploy_nixos" {
       local.build_on_target,
       local.ssh_private_key == "" ? "-" : local.ssh_private_key,
       "switch",
+      var.delete_older_than,
       ],
       local.extra_build_args
     )

@@ -33,7 +33,8 @@ targetPort="$4"
 buildOnTarget="$5"
 sshPrivateKey="$6"
 action="$7"
-shift 7
+deleteOlderThan="$8"
+shift 8
 
 # remove the last argument
 set -- "${@:1:$(($# - 1))}"
@@ -126,4 +127,7 @@ targetHostCmd "$outPath/bin/switch-to-configuration" "$action"
 
 # Cleanup previous generations
 log "collecting old nix derivations"
-targetHostCmd "nix-collect-garbage" "-d"
+# Deliberately not quoting $deleteOlderThan so the user can configure something like "1 2 3" 
+# to keep generations with those numbers
+targetHostCmd "nix-env" "--profile" "$profile" "--delete-generations" $deleteOlderThan
+targetHostCmd "nix-store" "--gc"
