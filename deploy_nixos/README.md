@@ -12,6 +12,8 @@ difference will be detected on the next "terraform plan".
 
 Either pass a "config" which is a dynamic nixos configuration and a
 "config_pwd", or a "nixos_config", a path to a nixos configuration.nix file.
+If you have defined your NixOs configuration in a Flake, use "nixos_config" 
+to specify the name of the attribue and set "flake" to true.
 
 ### Secret handling
 
@@ -106,6 +108,7 @@ see also:
 | extra\_build\_args | List of arguments to pass to the nix builder | `list(string)` | `[]` | no |
 | extra\_eval\_args | List of arguments to pass to the nix evaluation | `list(string)` | `[]` | no |
 | hermetic | Treat the provided nixos configuration as a hermetic expression and do not evaluate using the ambient system nixpkgs. Useful if you customize eval-modules or use a pinned nixpkgs. | `bool` | false | no |
+| flake | Treat the provided nixos_config as the name of the NixOS configuration to use in the flake located in the current directory. Useful if you customize eval-modules or use a pinned nixpkgs. | `bool` | false | no |
 | keys | A map of filename to content to upload as secrets in /var/keys | `map(string)` | `{}` | no |
 | nixos\_config | Path to a NixOS configuration | `string` | `""` | no |
 | ssh\_agent | Whether to use an SSH agent. True if not ssh\_private\_key is passed | `bool` | `null` | no |
