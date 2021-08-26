@@ -99,6 +99,12 @@ variable "hermetic" {
   default     = false
 }
 
+variable "flake" {
+  type        = bool
+  description = "Treat the provided nixos_config as the NixOS configuration to use in the flake located in the current directory"
+  default     = false
+}
+
 variable "delete_older_than" {
   type        = string
   description = "Can be a list of generation numbers, the special value old to delete all non-current generations, a value such as 30d to delete all generations older than the specified number of days (except for the generation that was active at that point in time), or a value such as +5 to keep the last 5 generations ignoring any newer than current, e.g., if 30 is the current generation +5 will delete generation 25 and all older generations."
@@ -132,6 +138,7 @@ data "external" "nixos-instantiate" {
     var.NIX_PATH == "" ? "-" : var.NIX_PATH,
     var.config != "" ? var.config : var.nixos_config,
     var.config_pwd == "" ? "." : var.config_pwd,
+    var.flake,
     # end of positional arguments
     # start of pass-through arguments
     "--argstr", "system", var.target_system,
