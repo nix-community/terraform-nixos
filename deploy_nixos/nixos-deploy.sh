@@ -62,6 +62,16 @@ copyToTarget() {
   NIX_SSHOPTS="${sshOpts[*]}" nix-copy-closure --to "$targetHost" "$@"
 }
 
+exportToTarget() {
+    nix-store --export $(nix-store --query --requisites "$1") |
+	lzma --compress |
+	pv |
+	ssh "${sshOpts[@]}" "$targetHost" '
+	    lzma --decompress |
+	    nix-store --import
+	'
+}
+
 # assumes that passwordless sudo is enabled on the server
 targetHostCmd() {
   # ${*@Q} escapes the arguments losslessly into space-separted quoted strings.
@@ -101,7 +111,8 @@ if [[ "${buildOnTarget:-false}" == true ]]; then
 
   # Upload derivation
   log "uploading derivations"
-  copyToTarget "$drvPath" --gzip --use-substitutes
+  # copyToTarget "$drvPath" --gzip --use-substitutes
+  exportToTarget "$drvPath"
 
   # Build remotely
   log "building on target"
