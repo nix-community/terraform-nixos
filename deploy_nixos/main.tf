@@ -113,7 +113,7 @@ variable "delete_older_than" {
 
 variable "timeout" {
   type        = string
-  description = "Remote connection timeout."
+  description = "Remote ssh connection timeout."
   default     = "100s"
 }
 
