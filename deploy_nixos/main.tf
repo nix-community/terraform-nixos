@@ -111,6 +111,12 @@ variable "delete_older_than" {
   default     = "+1"
 }
 
+variable "timeout" {
+  type        = string
+  description = "Remote ssh connection timeout."
+  default     = "100s"
+}
+
 # --------------------------------------------------------------------------
 
 locals {
@@ -157,7 +163,7 @@ resource "null_resource" "deploy_nixos" {
     port        = var.target_port
     user        = var.target_user
     agent       = local.ssh_agent
-    timeout     = "100s"
+    timeout     = var.timeout
     private_key = local.ssh_private_key == "-" ? "" : local.ssh_private_key
   }
 

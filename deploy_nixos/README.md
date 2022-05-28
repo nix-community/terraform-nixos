@@ -118,6 +118,7 @@ see also:
 | target\_port | SSH port used to connect to the target\_host | `number` | `22` | no |
 | target\_system | Nix system string | `string` | `"x86_64-linux"` | no |
 | target\_user | SSH user used to connect to the target\_host | `string` | `"root"` | no |
+| timeout | Remote ssh connection timeout | `string` | `"100s"` | no |
 | triggers | Triggers for deploy | `map(string)` | `{}` | no |
 
 ## Outputs
