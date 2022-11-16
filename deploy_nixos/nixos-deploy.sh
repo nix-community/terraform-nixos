@@ -20,6 +20,8 @@ sshOpts=(
   -o "GlobalKnownHostsFile=/dev/null"
   # interactive authentication is not possible
   -o "BatchMode=yes"
+  # prevent authentication failures when the user has too many keys
+  -o "IdentitiesOnly=yes"
   # verbose output for easier debugging
   -v
 )
