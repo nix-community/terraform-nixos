@@ -24,17 +24,18 @@ sshOpts=(
   -v
 )
 
+buildOnTarget="${BUILD_ON_TARGET:-}"
+sshPrivateKey="${SSH_PRIVATE_KEY:--}"
+
 ###  Argument parsing ###
 
 drvPath="$1"
 outPath="$2"
 targetHost="$3"
 targetPort="$4"
-buildOnTarget="$5"
-sshPrivateKey="$6"
-action="$7"
-deleteOlderThan="$8"
-shift 8
+action="$5"
+deleteOlderThan="$6"
+shift 6
 
 # remove the last argument
 set -- "${@:1:$(($# - 1))}"
