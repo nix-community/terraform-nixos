@@ -194,14 +194,16 @@ resource "null_resource" "deploy_nixos" {
       data.external.nixos-instantiate.result["out_path"],
       "${var.target_user}@${var.target_host}",
       var.target_port,
-      local.build_on_target,
-      local.ssh_private_key == "" ? "-" : local.ssh_private_key,
       "switch",
       var.delete_older_than,
       ],
       local.extra_build_args
     )
     command = "ignoreme"
+    environment = {
+      BUILD_ON_TARGET = local.build_on_target
+      SSH_PRIVATE_KEY = local.ssh_private_key == "" ? "-" : local.ssh_private_key
+    }
   }
 }
 
