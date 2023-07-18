@@ -59,7 +59,7 @@ log() {
 }
 
 copyToTarget() {
-  NIX_SSHOPTS="${sshOpts[*]}" nix-copy-closure --to "$targetHost" "$@"
+  NIX_SSHOPTS="${sshOpts[*]}" nix --extra-experimental-features nix-command copy --to "ssh://$targetHost" "$@" --derivation --no-check-sigs
 }
 
 # assumes that passwordless sudo is enabled on the server
@@ -101,7 +101,7 @@ if [[ "${buildOnTarget:-false}" == true ]]; then
 
   # Upload derivation
   log "uploading derivations"
-  copyToTarget "$drvPath" --gzip --use-substitutes
+  copyToTarget "$drvPath"
 
   # Build remotely
   log "building on target"
@@ -116,7 +116,7 @@ else
 
   # Upload build results
   log "uploading build results"
-  copyToTarget "$outPath" --gzip --use-substitutes
+  copyToTarget "$outPath"
 
 fi
 
