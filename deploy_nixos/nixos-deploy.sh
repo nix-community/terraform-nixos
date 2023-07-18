@@ -58,19 +58,8 @@ log() {
   echo "--- $*" >&2
 }
 
-# Use nix-copy-closure to copy some things to the target host.
-# nix-copy-closure avoids copying store objects that are already on the target
-# host.  It performs well when copying large objects.
 copyToTarget() {
-  NIX_SSHOPTS="${sshOpts[*]}" nix-copy-closure --to "$targetHost" "$@"
-}
-
-# Use nix-store --export/--import via ssh to copy some things to the target
-# host.  This removes a lot of round-trips compared to copyToTarget which is
-# beneficial when copying many small store objects - such as .drv files.
-exportToTarget() {
-    nix-store --export $(nix-store --query --requisites "$1") |
-	ssh -o Compression=yes "${sshOpts[@]}" "$targetHost" 'nix-store --import'
+  NIX_SSHOPTS="${sshOpts[*]}" nix --extra-experimental-features nix-command copy --to "ssh://$targetHost" "$@" --derivation --no-check-sigs
 }
 
 # assumes that passwordless sudo is enabled on the server
@@ -112,9 +101,7 @@ if [[ "${buildOnTarget:-false}" == true ]]; then
 
   # Upload derivation
   log "uploading derivations"
-  # Since derivations are small and there are likely many, use exportToTarget
-  # which should be faster than copyToTarget most of the time.
-  exportToTarget "$drvPath"
+  copyToTarget "$drvPath"
 
   # Build remotely
   log "building on target"
@@ -129,10 +116,7 @@ else
 
   # Upload build results
   log "uploading build results"
-  # Since we are copying build outputs they are probably not all very small
-  # objects so use copyToTarget which might be able to avoid copying some of
-  # them.
-  copyToTarget "$outPath" --gzip --use-substitutes
+  copyToTarget "$outPath"
 
 fi
 
