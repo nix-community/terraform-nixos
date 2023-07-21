@@ -111,6 +111,12 @@ variable "delete_older_than" {
   default     = "+1"
 }
 
+variable "env_variables" {
+  type = map(string)
+  description = "Environment variables to set when running nixos-deploy.sh"
+  default = {}
+}
+
 # --------------------------------------------------------------------------
 
 locals {
@@ -202,6 +208,7 @@ resource "null_resource" "deploy_nixos" {
       local.extra_build_args
     )
     command = "ignoreme"
+    environment = var.env_variables
   }
 }
 
