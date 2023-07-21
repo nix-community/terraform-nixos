@@ -128,13 +128,19 @@ locals {
   extra_build_args = concat([
     "--option", "substituters", data.external.nixos-instantiate.result["substituters"],
     "--option", "trusted-public-keys", data.external.nixos-instantiate.result["trusted-public-keys"],
-    ],
+  ],
     var.extra_build_args,
   )
   ssh_private_key_file = var.ssh_private_key_file == "" ? "-" : var.ssh_private_key_file
   ssh_private_key      = local.ssh_private_key_file == "-" ? var.ssh_private_key : file(local.ssh_private_key_file)
   ssh_agent            = var.ssh_agent == null ? (local.ssh_private_key != "") : var.ssh_agent
   build_on_target      = data.external.nixos-instantiate.result["currentSystem"] != var.target_system ? true : tobool(var.build_on_target)
+}
+
+locals {
+  env_vars_args = flatten([
+    for k, v in var.env_variables : ["--envstr", k, v]
+  ])
 }
 
 # used to detect changes in the configuration
@@ -149,8 +155,9 @@ data "external" "nixos-instantiate" {
     # start of pass-through arguments
     "--argstr", "system", var.target_system,
     "--arg", "hermetic", var.hermetic
-    ],
+  ],
     var.extra_eval_args,
+    local.env_vars_args,
   )
 }
 
@@ -204,7 +211,7 @@ resource "null_resource" "deploy_nixos" {
       local.ssh_private_key == "" ? "-" : local.ssh_private_key,
       "switch",
       var.delete_older_than,
-      ],
+    ],
       local.extra_build_args
     )
     command = "ignoreme"

@@ -1,12 +1,39 @@
 #! /usr/bin/env bash
 set -euo pipefail
 
+
+
 # Args
 nix_path=$1
 config=$2
 config_pwd=$3
 flake=$4
 shift 4
+
+
+
+# An array to store all original args
+all_args=("$@")
+
+# A temporary array to hold the new args for some_command
+new_args=()
+
+# Iterate over all arguments
+for ((i=0; i<$#; i++)); do
+  # If the argument is --envstr
+  if [ "${all_args[$i]}" == "--envstr" ]; then
+    # If there are still at least two arguments (the key and value)
+    if (( $#+1-i >= 2 )); then
+      # Use export to set the environment variable
+      export "${all_args[$((i+1))]}"="${all_args[$((i+2))]}"
+      # Skip the key and value by increasing i by 2
+      i=$((i+2))
+    fi
+  else
+    # If the argument is not --envstr, add it to the new_args array
+    new_args+=("${all_args[$i]}")
+  fi
+done
 
 
 command=(nix-instantiate --show-trace --expr '
@@ -65,7 +92,7 @@ else
 fi
 
 # add all extra CLI args as extra build arguments
-command+=("$@")
+command+=("${new_args[@]}")
 
 # Setting the NIX_PATH
 if [[ -n "$nix_path" && "$nix_path" != "-" ]]; then
