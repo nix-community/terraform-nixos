@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # nixos-deploy deploys a nixos-instantiate-generated drvPath to a target host
 #
-# Usage: nixos-deploy.sh <drvPath> <host> <switch-action> [<build-opts>] ignoreme
+# Usage: nixos-deploy.sh <drvPath> <host> <switch-action> <deleteOlderThan> <copyConcurrency> [<build-opts>] ignoreme
 set -euo pipefail
 
 ### Defaults ###
@@ -34,7 +34,8 @@ buildOnTarget="$5"
 sshPrivateKey="$6"
 action="$7"
 deleteOlderThan="$8"
-shift 8
+copyConcurrency="$9"
+shift 9
 
 # remove the last argument
 set -- "${@:1:$(($# - 1))}"
@@ -59,7 +60,7 @@ log() {
 }
 
 copyToTarget() {
-  NIX_SSHOPTS="${sshOpts[*]}" nix-copy-closure --to "$targetHost" "$@"
+  NIX_SSHOPTS="${sshOpts[*]}" nix-copy-closure --max-jobs "$copyConcurrency" --to "$targetHost" "$@"
 }
 
 # assumes that passwordless sudo is enabled on the server

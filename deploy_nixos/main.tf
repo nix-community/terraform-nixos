@@ -69,6 +69,12 @@ variable "extra_build_args" {
   default     = []
 }
 
+variable "closure_copy_concurrency" {
+  type        = number
+  description = "Concurrency to apply when copying derivations to the target_host"
+  default     = 1
+}
+
 variable "build_on_target" {
   type        = string
   description = "Avoid building on the deployer. Must be true or false. Has no effect when deploying from an incompatible system. Unlike remote builders, this does not require the deploying user to be trusted by its host."
@@ -198,6 +204,7 @@ resource "null_resource" "deploy_nixos" {
       local.ssh_private_key == "" ? "-" : local.ssh_private_key,
       "switch",
       var.delete_older_than,
+      var.closure_copy_concurrency,
       ],
       local.extra_build_args
     )
